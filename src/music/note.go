@@ -19,10 +19,10 @@ type Note struct {
 }
 
 func (n Note) Add(interval int) (result Note) {
-	result = Note{MidiValue: n.MidiValue + interval, NameSharp: strings.ToLower(n.NameSharp)}
+	result = Note{MidiValue: n.MidiValue + interval, NameSharp: n.NameSharp}
 	for _, d := range noteDB {
 		if d.MidiValue == n.MidiValue+interval {
-			result = Note{MidiValue: d.MidiValue, NameSharp: strings.ToLower(d.NameSharp)}
+			result = Note{MidiValue: d.MidiValue, NameSharp: d.NameSharp}
 			break
 		}
 	}
@@ -42,7 +42,7 @@ func findMaxPrefix(a string, b string) string {
 
 func exactMatch(n string) (note Note, ok bool) {
 	for _, m := range noteDB {
-		for _, noteFullName := range append(m.NamesOther, strings.ToLower(m.NameSharp)) {
+		for _, noteFullName := range append(m.NamesOther, m.NameSharp) {
 			if n == noteFullName {
 				return Note{MidiValue: m.MidiValue, NameSharp: m.NameSharp}, true
 			}
@@ -86,7 +86,7 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 	for i, n := range noteStrings {
 		if note, ok := exactMatch(n); ok {
 			log.Tracef("found exact match %s %d", n, note.MidiValue)
-			notes[i] = Note{MidiValue: note.MidiValue, NameSharp: strings.ToLower(note.NameSharp)}
+			notes[i] = Note{MidiValue: note.MidiValue, NameSharp: note.NameSharp}
 			midiNear = note.MidiValue
 		} else {
 			// find closes to midiNear
@@ -94,13 +94,13 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 			closestDistance := math.Inf(1)
 			for _, m := range noteDB {
 				for octave := -1; octave <= 8; octave++ {
-					for _, noteFullName := range append(m.NamesOther, strings.ToLower(m.NameSharp)) {
+					for _, noteFullName := range append(m.NamesOther, m.NameSharp) {
 						noteName := findMaxPrefix(n, noteFullName)
 						if noteName != "" && (noteName == noteFullName || (noteName+strconv.Itoa(octave)) == noteFullName) {
 							if math.Abs(float64(m.MidiValue-midiNear)) < closestDistance {
 								closestDistance = math.Abs(float64(m.MidiValue - midiNear))
 								log.Tracef("found %s %d", noteFullName, m.MidiValue)
-								newNote = Note{MidiValue: m.MidiValue, NameSharp: strings.ToLower(m.NameSharp)}
+								newNote = Note{MidiValue: m.MidiValue, NameSharp: m.NameSharp}
 							}
 						}
 					}
@@ -109,7 +109,7 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 			if newNote.MidiValue != 300 {
 				log.Tracef("found %s %d", newNote.NameSharp, newNote.MidiValue)
 				notes[i] = newNote
-				notes[i].NameSharp = strings.ToLower(newNote.NameSharp)
+				notes[i].NameSharp = newNote.NameSharp
 				midiNear = newNote.MidiValue
 			} else {
 				err = fmt.Errorf("parsemidi could not parse %s", n)

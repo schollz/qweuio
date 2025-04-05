@@ -1,5 +1,7 @@
 package music
 
+import "strings"
+
 var noteDB = []Note{
 	Note{MidiValue: -12, NameSharp: "C-2", Frequency: 4.0879, NamesOther: []string{"c-2"}},
 	Note{MidiValue: -11, NameSharp: "C#-2", Frequency: 4.331, NamesOther: []string{"cs-2", "db-2"}},
@@ -276,5 +278,30 @@ func init() {
 		for _, a := range notesAdds {
 			notesAll = append(notesAll, n+a)
 		}
+	}
+	// convert everything to lowercase
+	for i, n := range notesWhite {
+		notesWhite[i] = strings.ToLower(n)
+	}
+	for i, n := range notesScaleSharp {
+		notesScaleSharp[i] = strings.ToLower(n)
+	}
+	for i, n := range notesScaleAcc1 {
+		notesScaleAcc1[i] = strings.ToLower(n)
+	}
+	for i, n := range notesScaleAcc2 {
+		notesScaleAcc2[i] = strings.ToLower(n)
+	}
+	for i, n := range notesScaleAcc3 {
+		notesScaleAcc3[i] = strings.ToLower(n)
+	}
+	for i, n := range notesAdds {
+		notesAdds[i] = strings.ToLower(n)
+	}
+	for i, n := range notesAll {
+		notesAll[i] = strings.ToLower(n)
+	}
+	for i, n := range noteDB {
+		noteDB[i].NameSharp = strings.ToLower(n.NameSharp)
 	}
 }

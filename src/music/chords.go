@@ -37,7 +37,7 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 		chordSplit := strings.Split(chordString, "/")
 		chordString = chordSplit[0]
 		if len(chordSplit) > 1 {
-			transposeNote = chordSplit[1]
+			transposeNote = strings.ToLower(chordSplit[1])
 		}
 	}
 	log.Tracef("transposeNote: %s", transposeNote)
@@ -48,7 +48,7 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 	chordRest := ""
 	for _, n := range notesAll {
 		if transposeNote != "" && len(n) > len(transposeNoteMatch) {
-			if strings.ToLower(n) == transposeNote || n == transposeNote {
+			if n == transposeNote {
 				transposeNoteMatch = n
 			}
 		}
@@ -204,6 +204,8 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 		}
 		if !foundNote {
 			notesInChord = append([]string{transposeNoteMatch}, notesInChord...)
+		} else {
+			log.Tracef("transposeNoteMatch: %s", transposeNoteMatch)
 		}
 	}
 	log.Tracef("notesInChord: %v", notesInChord)
@@ -231,7 +233,7 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 
 	result = make([]Note, len(midiNotesInChord))
 	for i, m := range midiNotesInChord {
-		result[i] = Note{MidiValue: m, NameSharp: strings.ToLower(notesInChord[i])}
+		result[i] = Note{MidiValue: m, NameSharp: notesInChord[i]}
 	}
 	log.Tracef("result: %v", result)
 
