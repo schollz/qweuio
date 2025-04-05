@@ -14,7 +14,7 @@ func TestExpandArpeggio(t *testing.T) {
 		line     string
 		expected string
 	}{
-		{"C!u4d3$v#a", "c4$v#a e4$v#a g4$v#a c5$v#a g4$v#a e4$v#a c4$v#a"},
+		{"C@u4d3$v#a", "c4$v#a e4$v#a g4$v#a c5$v#a g4$v#a e4$v#a c4$v#a"},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("line(%s)", test.line), func(t *testing.T) {
