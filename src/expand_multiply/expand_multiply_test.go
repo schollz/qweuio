@@ -40,6 +40,7 @@ func TestExpandMultiply(t *testing.T) {
 		{"[a b]*3 c", "a b a b a b c"},
 		{"[[a b b]*2 a]*2 c", "a b b a b b a a b b a b b a c"},
 		{"a  *3 b c", "a a a b c"},
+		{"[ a * 2 b] * 4", "a a b a a b a a b a a b"},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("line(%s)", test.line), func(t *testing.T) {
