@@ -1,11 +1,10 @@
 package modifier
 
 import (
+	"asdfgh/src/constants"
 	"regexp"
 	"strings"
 )
-
-const AVAILABLE_MODIFIERS = "!@#$"
 
 type ModifiedString struct {
 	Original   string
@@ -19,7 +18,7 @@ func Split(s string) (result ModifiedString) {
 
 	result.Modifiers = make([]string, 0)
 	for i, part := range splitWithDelimiters(s) {
-		if i == 0 && !strings.Contains(string(AVAILABLE_MODIFIERS), part) {
+		if i == 0 && !strings.Contains(string(constants.MODIFIERS), part) {
 			result.Unmodified = part
 		} else {
 			result.Modifiers = append(result.Modifiers, part)
@@ -27,6 +26,10 @@ func Split(s string) (result ModifiedString) {
 	}
 
 	return
+}
+
+func Merge(s string, modifiers []string) (result string) {
+	return s + strings.Join(modifiers, "")
 }
 
 func Remove(s string, modifier string) (result string) {
@@ -41,11 +44,24 @@ func Remove(s string, modifier string) (result string) {
 	return
 }
 
+func Pop(s string, modifier string) (resultWihoutModifier string, modifierPart string) {
+	sSplit := splitWithDelimiters(s)
+	resultWihoutModifier = ""
+	for i, part := range sSplit {
+		if i > 0 && strings.Contains(part, modifier) {
+			modifierPart = part[1:]
+			continue
+		}
+		resultWihoutModifier += part
+	}
+	return
+}
+
 // splitWithDelimiters splits the input string on the given delimiters,
 // keeping the delimiters at the beginning of each resulting part.
 func splitWithDelimiters(input string) []string {
 	// Define the regex pattern to match delimiters: !, @, #, $
-	pattern := regexp.MustCompile("[" + string(AVAILABLE_MODIFIERS) + "]")
+	pattern := regexp.MustCompile("[" + string(constants.MODIFIERS) + "]")
 	// Split the string by capturing the delimiters.
 	parts := pattern.Split(input, -1)
 	delimiters := pattern.FindAllString(input, -1)

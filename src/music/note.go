@@ -19,10 +19,10 @@ type Note struct {
 }
 
 func (n Note) Add(interval int) (result Note) {
-	result = Note{MidiValue: n.MidiValue + interval, NameSharp: n.NameSharp}
+	result = Note{MidiValue: n.MidiValue + interval, NameSharp: strings.ToLower(n.NameSharp)}
 	for _, d := range noteDB {
 		if d.MidiValue == n.MidiValue+interval {
-			result = Note{MidiValue: d.MidiValue, NameSharp: d.NameSharp}
+			result = Note{MidiValue: d.MidiValue, NameSharp: strings.ToLower(d.NameSharp)}
 			break
 		}
 	}

@@ -69,3 +69,29 @@ func TestSplit(t *testing.T) {
 		}
 	}
 }
+
+func TestPop(t *testing.T) {
+	tests := []struct {
+		input    string
+		pop      string
+		newInput string
+		expected string
+	}{
+		{
+			input:    "hello!ok#$world",
+			pop:      "!",
+			newInput: "hello#$world",
+			expected: "ok",
+		},
+	}
+
+	for _, test := range tests {
+		newInput, modifier := Pop(test.input, test.pop)
+		if newInput != test.newInput {
+			t.Errorf("expected %s, got %s", test.newInput, newInput)
+		}
+		if modifier != test.expected {
+			t.Errorf("expected %s, got %s", test.expected, modifier)
+		}
+	}
+}
