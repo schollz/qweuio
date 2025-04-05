@@ -34,7 +34,7 @@ func TestExpandMultiply(t *testing.T) {
 		expected string
 	}{
 		{"a b c", "a b c"},
-		{"a*3 b c", "a a a b c"},
+		{"a*3 - c", "a a a - c"},
 		{"a*3 b*2 c", "a a a b b c"},
 		{"[a b] c", "a b c"},
 		{"[a b]*3 c", "a b a b a b c"},
