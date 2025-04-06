@@ -1,9 +1,15 @@
 package step
 
 import (
+	"encoding/json"
+	"fmt"
+	"regexp"
+	"strings"
+
 	"asdfgh/src/constants"
 	"asdfgh/src/music"
-	"fmt"
+
+	log "github.com/schollz/logger"
 )
 
 type Notes struct {
@@ -11,20 +17,47 @@ type Notes struct {
 }
 
 type Step struct {
-	Original    string
-	Iteration   int
-	Notes       []music.Note
-	Velocity    []int
-	Transpose   []int
-	Probability []int
-	Arpeggio    []string
-	Gate        []float64
-	TimeStart   float64
-	Duration    float64
+	Original    string       `json:"original,omitempty"`
+	Iteration   int          `json:"iteration,omitempty"`
+	NotesString []string     `json:"notes_string,omitempty"`
+	Notes       []music.Note `json:"notes,omitempty"`
+	Velocity    []int        `json:"velocity,omitempty"`
+	Transpose   []int        `json:"transpose,omitempty"`
+	Probability []int        `json:"probability,omitempty"`
+	Arpeggio    []string     `json:"arpeggio,omitempty"`
+	Gate        []float64    `json:"gate,omitempty"`
+	TimeStart   float64      `json:"time_start,omitempty"`
+	Duration    float64      `json:"duration,omitempty"`
 }
 
 func (s Step) String() string {
 	return fmt.Sprintf("%s[%2.2f,%2.2f]", s.Original, s.TimeStart, s.Duration)
+}
+
+var regexpParseModifiers = regexp.MustCompile("[" + string(constants.MODIFIERS) + "]")
+
+func (s *Step) Parse() (err error) {
+	// uses Orgnal string to parse the step
+	// Split the string by capturing the delimiters.
+	parts := regexpParseModifiers.Split(s.Original, -1)
+	delimiters := regexpParseModifiers.FindAllString(s.Original, -1)
+	log.Tracef("parts: %v", parts)
+	log.Tracef("delimiters: %v", delimiters)
+	for i, part := range parts {
+		if i == 0 {
+			// First part is the note
+			s.NotesString = strings.Split(part, ",")
+		} else {
+			// Subsequent parts are modifiers
+			switch delimiters[i-1] {
+			case string(constants.MODIFIER_ARPEGGIO):
+				s.Arpeggio = strings.Split(part, ",")
+			}
+		}
+	}
+	b, _ := json.Marshal(s)
+	log.Tracef("step: %s", b)
+	return
 }
 
 type Steps struct {
