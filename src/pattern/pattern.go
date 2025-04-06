@@ -23,10 +23,7 @@ func Parse(s string) (p Pattern, err error) {
 		steps, err = expand_line.ExpandLine(line)
 		p.Steps.Add(steps.Step...)
 	}
-	log.Tracef("steps: %s", p.Steps)
-	p.Steps.CalculateEnd()
-	log.Tracef("steps: %s", p.Steps)
-	p.Steps.ClearRests()
-	log.Tracef("steps: %s", p.Steps)
+	p.Steps.Expand()
+	log.Tracef("Pattern: %s", p.Steps)
 	return
 }

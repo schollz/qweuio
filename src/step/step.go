@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"asdfgh/src/constants"
@@ -31,10 +32,41 @@ type Step struct {
 }
 
 func (s Step) String() string {
-	return fmt.Sprintf("%s[%2.2f,%2.2f]", s.Original, s.TimeStart, s.Duration)
+	b, _ := json.Marshal(s)
+	return string(b)
 }
 
 var regexpParseModifiers = regexp.MustCompile("[" + string(constants.MODIFIERS) + "]")
+
+func splitStringToInts(s string) (result []int) {
+	result = make([]int, 0)
+	for _, v := range strings.Split(s, ",") {
+		if v == "" {
+			continue
+		}
+		if i, err := strconv.Atoi(v); err == nil {
+			result = append(result, i)
+		} else {
+			log.Errorf("Error parsing string to int: %s", err)
+		}
+	}
+	return
+}
+
+func splitStringToFloats(s string) (result []float64) {
+	result = make([]float64, 0)
+	for _, v := range strings.Split(s, ",") {
+		if v == "" {
+			continue
+		}
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			result = append(result, f)
+		} else {
+			log.Errorf("Error parsing string to float: %s", err)
+		}
+	}
+	return
+}
 
 func (s *Step) Parse() (err error) {
 	// uses Orgnal string to parse the step
@@ -52,6 +84,16 @@ func (s *Step) Parse() (err error) {
 			switch delimiters[i-1] {
 			case string(constants.MODIFIER_ARPEGGIO):
 				s.Arpeggio = strings.Split(part, ",")
+			case string(constants.MODIFIER_VELOCITY):
+				s.Velocity = splitStringToInts(part)
+			case string(constants.MODIFIER_TRANSPOSE):
+				s.Transpose = splitStringToInts(part)
+			case string(constants.MODIFIER_PROBABILITY):
+				s.Probability = splitStringToInts(part)
+			case string(constants.MODIFIER_GATE):
+				s.Gate = splitStringToFloats(part)
+			default:
+				log.Errorf("Unknown modifier: %s", delimiters[i-1])
 			}
 		}
 	}
@@ -72,7 +114,7 @@ func (s Steps) Count() int {
 func (s Steps) String() string {
 	var result string
 	for _, step := range s.Step {
-		result += step.String() + " "
+		result += step.String() + "\n"
 	}
 	result += fmt.Sprintf("total: %2.2f", s.Total)
 	return result
@@ -132,4 +174,19 @@ func (s *Steps) ClearRests() {
 		stepsNew.Add(s.Step[i])
 	}
 	s.Step = stepsNew.Step
+}
+
+func (s *Steps) Parse() {
+	// Parse each step
+	for i := range s.Step {
+		if err := s.Step[i].Parse(); err != nil {
+			log.Errorf("Error parsing step: %s", err)
+		}
+	}
+}
+
+func (s *Steps) Expand() {
+	s.CalculateEnd()
+	s.ClearRests()
+	s.Parse()
 }

@@ -1,13 +1,18 @@
 package step
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestParseStep(t *testing.T) {
 	tests := []struct {
 		stepString string
 		parsed     Step
 	}{
-		{"Cmaj@u2d4", Step{NotesString: []string{"Cmaj"}, Arpeggio: []string{"u2d4"}}},
+		{"Cmaj@u2d4!120,30", Step{NotesString: []string{"Cmaj"}, Arpeggio: []string{"u2d4"}, Velocity: []int{120, 30}}},
+		{"c,d,e#0.1,0.3", Step{NotesString: []string{"c", "d", "e"}, Gate: []float64{0.1, 0.3}}},
 	}
 
 	for _, test := range tests {
@@ -17,18 +22,12 @@ func TestParseStep(t *testing.T) {
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
-			if len(parsed.NotesString) != len(test.parsed.NotesString) {
-				t.Fatalf("expected %d notes, got %d", len(test.parsed.NotesString), len(parsed.NotesString))
-			}
-			if len(parsed.Arpeggio) != len(test.parsed.Arpeggio) {
-				t.Fatalf("expected %d arpeggios, got %d", len(test.parsed.Arpeggio), len(parsed.Arpeggio))
-			}
-			if parsed.NotesString[0] != test.parsed.NotesString[0] {
-				t.Fatalf("expected %s, got %s", test.parsed.NotesString[0], parsed.NotesString[0])
-			}
-			if parsed.Arpeggio[0] != test.parsed.Arpeggio[0] {
-				t.Fatalf("expected %s, got %s", test.parsed.Arpeggio[0], parsed.Arpeggio[0])
-			}
+			assert.Equal(t, test.parsed.NotesString, parsed.NotesString, "NotesString should match")
+			assert.Equal(t, test.parsed.Arpeggio, parsed.Arpeggio, "Arpeggio should match")
+			assert.Equal(t, test.parsed.Velocity, parsed.Velocity, "Velocity should match")
+			assert.Equal(t, test.parsed.Transpose, parsed.Transpose, "Transpose should match")
+			assert.Equal(t, test.parsed.Probability, parsed.Probability, "Probability should match")
+			assert.Equal(t, test.parsed.Gate, parsed.Gate, "Gate should match")
 		})
 	}
 
