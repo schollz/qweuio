@@ -273,6 +273,24 @@ var notesScaleAcc3 = []string{"Bs", "Db", "D", "Eb", "Fb", "Es", "Gb", "G", "Ab"
 var notesAdds = []string{"", "#", "b", "s"}
 var notesAll = []string{}
 
+var C4 = Note{MidiValue: 60, NameSharp: "C4", Frequency: 261.626, NamesOther: []string{"c4"}}
+var D4 = Note{MidiValue: 62, NameSharp: "D4", Frequency: 293.665, NamesOther: []string{"d4"}}
+var E4 = Note{MidiValue: 64, NameSharp: "E4", Frequency: 329.628, NamesOther: []string{"e4", "fb4"}}
+var F4 = Note{MidiValue: 65, NameSharp: "F4", Frequency: 349.228, NamesOther: []string{"f4"}}
+var G4 = Note{MidiValue: 67, NameSharp: "G4", Frequency: 391.995, NamesOther: []string{"g4"}}
+var A4 = Note{MidiValue: 69, NameSharp: "A4", Frequency: 440, NamesOther: []string{"a4"}}
+var B4 = Note{MidiValue: 71, NameSharp: "B4", Frequency: 493.883, NamesOther: []string{"b4", "cb4"}}
+var C5 = Note{MidiValue: 72, NameSharp: "C5", Frequency: 523.251, NamesOther: []string{"c5"}}
+var D5 = Note{MidiValue: 74, NameSharp: "D5", Frequency: 587.33, NamesOther: []string{"d5"}}
+var E5 = Note{MidiValue: 76, NameSharp: "E5", Frequency: 659.255, NamesOther: []string{"e5", "fb5"}}
+var F5 = Note{MidiValue: 77, NameSharp: "F5", Frequency: 698.456, NamesOther: []string{"f5"}}
+var G5 = Note{MidiValue: 79, NameSharp: "G5", Frequency: 783.991, NamesOther: []string{"g5"}}
+var A5 = Note{MidiValue: 81, NameSharp: "A5", Frequency: 880, NamesOther: []string{"a5"}}
+var B5 = Note{MidiValue: 83, NameSharp: "B5", Frequency: 987.767, NamesOther: []string{"b5", "cb5"}}
+var C6 = Note{MidiValue: 84, NameSharp: "C6", Frequency: 1046.502, NamesOther: []string{"c6"}}
+var D6 = Note{MidiValue: 86, NameSharp: "D6", Frequency: 1174.659, NamesOther: []string{"d6"}}
+var E6 = Note{MidiValue: 88, NameSharp: "E6", Frequency: 1318.51, NamesOther: []string{"e6", "fb6"}}
+
 func init() {
 	for _, n := range notesWhite {
 		for _, a := range notesAdds {

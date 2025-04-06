@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"strings"
 
-	"asdfgh/src/constants"
-	"asdfgh/src/modifier"
 	"asdfgh/src/music"
 
 	log "github.com/schollz/logger"
@@ -16,21 +13,12 @@ import (
 const ARPEGGIO_UP = "u"
 const ARPEGGIO_DOWN = "d"
 
-func ExpandArpeggio(s string) (result string, err error) {
-	newS, arpString := modifier.Pop(s, constants.MODIFIER_ARPEGGIO)
-	if arpString == "" || newS == "" {
-		return s, nil
-	}
-	modified := modifier.Split(newS)
-	newS = modified.Unmodified
-	log.Tracef("%s --> %s, %s", s, result, arpString)
-
+func ExpandArpeggio(noteString, arpString string) (notes []music.Note, err error) {
 	tokenized := tokenizeLetterNumberes(arpString)
 	log.Tracef("tokenized: %v", tokenized)
 	notei := 0
 	octave := 0
-	notes := []music.Note{}
-	originalNotes, _ := music.Parse(newS, 60)
+	originalNotes, _ := music.Parse(noteString, 60)
 	log.Tracef("originalNotes: %v", originalNotes)
 
 	re := regexp.MustCompile(`\d+`)
@@ -75,14 +63,6 @@ func ExpandArpeggio(s string) (result string, err error) {
 			notes = append(notes, newNote)
 		}
 	}
-
-	noteString := ""
-	for _, note := range notes {
-		noteString += modifier.Merge(note.NameSharp, modified.Modifiers) + " "
-	}
-	result = strings.TrimSpace(noteString)
-
-	log.Tracef("result: %s", modified)
 
 	return
 }
