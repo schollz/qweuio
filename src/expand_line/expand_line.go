@@ -1,12 +1,37 @@
-package line
+package expand_line
 
 import (
+	"asdfgh/src/expand_multiply"
 	"asdfgh/src/step"
 	"strings"
 	"unicode"
+
+	log "github.com/schollz/logger"
 )
 
-func Parse(s string) (steps step.Steps, err error) {
+func ExpandLine(s string) (steps step.Steps, err error) {
+	steps = step.Steps{}
+	// First expand multiplication
+	sExpanded := expand_multiply.ExpandMultiplication(s)
+	log.Tracef("%s -> %s", s, sExpanded)
+
+	// Now parse and distribute
+	result := ParseAndDistribute(sExpanded)
+
+	startTime := 0.0
+	for _, tokenWeight := range result {
+		log.Tracef("Token: %s, Weight: %f", tokenWeight.Value, tokenWeight.Weight)
+		// Create a new step for each token
+		newStep := step.Step{
+			TimeStart: startTime,
+			Original:  tokenWeight.Value,
+		}
+		// Add the new step to the steps
+		steps.Add(newStep)
+		startTime += tokenWeight.Weight
+	}
+
+	log.Tracef("Parsed steps: %v", steps)
 
 	return
 }

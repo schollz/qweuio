@@ -1,19 +1,19 @@
-package line
+package expand_line
 
 import "testing"
 
-func TestParseLine(t *testing.T) {
+func TestExpandLine(t *testing.T) {
 	tests := []struct {
 		line       string
 		startTimes []float64
 	}{
 		{"a*3 b c", []float64{0, 1.0 / 3.0 / 3.0, 2.0 / 3.0 / 3.0, 1 / 3.0, 2.0 / 3.0}}, // "[a a a] b c"
-
+		{"[[a a] a] a", []float64{0, 0.125, 0.25, 0.5}},
 	}
 
 	for _, test := range tests {
 		t.Run(test.line, func(t *testing.T) {
-			result, err := Parse(test.line)
+			result, err := ExpandLine(test.line)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

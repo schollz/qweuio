@@ -1,6 +1,7 @@
 package pattern
 
 import (
+	"asdfgh/src/expand_line"
 	"asdfgh/src/step"
 	"strings"
 
@@ -13,24 +14,13 @@ type Pattern struct {
 
 func Parse(s string) (p Pattern, err error) {
 	p = Pattern{}
-	for i, line := range strings.Split(s, "\n") {
+	for _, line := range strings.Split(s, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
 		var steps step.Steps
-		for _, token := range strings.Fields(line) {
-			token = strings.TrimSpace(token)
-			if token == "" {
-				continue
-			}
-			steps.Add(step.Step{Original: token})
-		}
-		if steps.Count() == 0 {
-			continue
-		}
-		steps.CalculateStart()
-		log.Tracef("line %d, steps: %s", i, steps)
+		steps, err = expand_line.ExpandLine(line)
 		p.Steps.Add(steps.Step...)
 	}
 	log.Tracef("steps: %s", p.Steps)
