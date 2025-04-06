@@ -4,11 +4,24 @@ import (
 	"testing"
 )
 
-func TestParsePattern(t *testing.T) {
+func TestParseNotePattern(t *testing.T) {
 	patternString := `
-_ _ 0,1 c
+# a_notes
+_ _ a b
 _ Cmaj@u2d4
 [[a a] a] a`
+	pattern, err := Parse(patternString)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	_ = pattern
+}
+
+func TestParseVelocityPattern(t *testing.T) {
+	patternString := `
+! a_velocity
+30 40
+60 80 90 90`
 	pattern, err := Parse(patternString)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

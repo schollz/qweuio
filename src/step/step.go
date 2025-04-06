@@ -67,7 +67,7 @@ func splitStringToFloats(s string) (result []float64) {
 	return
 }
 
-func (s *Step) Parse() (err error) {
+func (s *Step) Parse(typeString string) (err error) {
 	// uses Orgnal string to parse the step
 	// Split the string by capturing the delimiters.
 	parts := regexpParseModifiers.Split(s.Original, -1)
@@ -76,23 +76,34 @@ func (s *Step) Parse() (err error) {
 	log.Tracef("delimiters: %v", delimiters)
 	for i, part := range parts {
 		if i == 0 {
-			// First part is the note
-			s.Notes = make([]music.Notes, 0)
-			lastMidi := 60
-			for _, noteString := range strings.Split(part, ",") {
-				if noteString == "" {
-					continue
+			switch typeString {
+			case string(constants.MODIFIER_NOTE):
+				// First part is the note
+				s.Notes = make([]music.Notes, 0)
+				lastMidi := 60
+				for _, noteString := range strings.Split(part, ",") {
+					if noteString == "" {
+						continue
+					}
+					noteObj, err := music.Parse(noteString, lastMidi)
+					if err != nil {
+						log.Errorf("Error parsing note: %s", err)
+						continue
+					}
+					s.Notes = append(s.Notes, music.Notes{
+						Original: noteString,
+						Note:     noteObj,
+					})
+					lastMidi = noteObj[len(noteObj)-1].MidiValue
 				}
-				noteObj, err := music.Parse(noteString, lastMidi)
-				if err != nil {
-					log.Errorf("Error parsing note: %s", err)
-					continue
-				}
-				s.Notes = append(s.Notes, music.Notes{
-					Original: noteString,
-					Note:     noteObj,
-				})
-				lastMidi = noteObj[len(noteObj)-1].MidiValue
+			case string(constants.MODIFIER_VELOCITY):
+				s.Velocity = splitStringToInts(part)
+			case string(constants.MODIFIER_TRANSPOSE):
+				s.Transpose = splitStringToInts(part)
+			case string(constants.MODIFIER_PROBABILITY):
+				s.Probability = splitStringToInts(part)
+			case string(constants.MODIFIER_GATE):
+				s.Gate = splitStringToFloats(part)
 			}
 		} else {
 			// Subsequent parts are modifiers
@@ -191,17 +202,17 @@ func (s *Steps) ClearRests() {
 	s.Step = stepsNew.Step
 }
 
-func (s *Steps) Parse() {
+func (s *Steps) Parse(typeString string) {
 	// Parse each step
 	for i := range s.Step {
-		if err := s.Step[i].Parse(); err != nil {
+		if err := s.Step[i].Parse(typeString); err != nil {
 			log.Errorf("Error parsing step: %s", err)
 		}
 	}
 }
 
-func (s *Steps) Expand() {
+func (s *Steps) Expand(typeString string) {
 	s.CalculateEnd()
 	s.ClearRests()
-	s.Parse()
+	s.Parse(typeString)
 }
