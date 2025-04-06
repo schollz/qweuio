@@ -1,6 +1,7 @@
 package step
 
 import (
+	"asdfgh/src/constants"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,13 +13,13 @@ func TestParseStep(t *testing.T) {
 		parsed     Step
 	}{
 		{"Cmaj@u2d4!120,30", Step{Arpeggio: []string{"u2d4"}, Velocity: []int{120, 30}}},
-		{"c,d,e#0.1,0.3", Step{Gate: []float64{0.1, 0.3}}},
+		{"c,d,e%0.1,0.3", Step{Gate: []float64{0.1, 0.3}}},
 	}
 
 	for _, test := range tests {
 		t.Run(test.stepString, func(t *testing.T) {
 			parsed := Step{Original: test.stepString}
-			err := parsed.Parse()
+			err := parsed.Parse(constants.MODIFIER_NOTE)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

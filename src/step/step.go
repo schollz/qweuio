@@ -22,11 +22,11 @@ type Step struct {
 	Iteration   int           `json:"iteration,omitempty"`
 	Notes       []music.Notes `json:"notes,omitempty"`
 	Velocity    []int         `json:"velocity,omitempty"`
-	Transpose   []int         `json:"transpose,omitempty"`
 	Probability []int         `json:"probability,omitempty"`
 	Arpeggio    []string      `json:"arpeggio,omitempty"`
+	Transpose   []float64     `json:"transpose,omitempty"`
 	Gate        []float64     `json:"gate,omitempty"`
-	TimeStart   float64       `json:"time_start,omitempty"`
+	TimeStart   float64       `json:"time_start"`
 	Duration    float64       `json:"duration,omitempty"`
 }
 
@@ -99,7 +99,7 @@ func (s *Step) Parse(typeString string) (err error) {
 			case string(constants.MODIFIER_VELOCITY):
 				s.Velocity = splitStringToInts(part)
 			case string(constants.MODIFIER_TRANSPOSE):
-				s.Transpose = splitStringToInts(part)
+				s.Transpose = splitStringToFloats(part)
 			case string(constants.MODIFIER_PROBABILITY):
 				s.Probability = splitStringToInts(part)
 			case string(constants.MODIFIER_GATE):
@@ -113,7 +113,7 @@ func (s *Step) Parse(typeString string) (err error) {
 			case string(constants.MODIFIER_VELOCITY):
 				s.Velocity = splitStringToInts(part)
 			case string(constants.MODIFIER_TRANSPOSE):
-				s.Transpose = splitStringToInts(part)
+				s.Transpose = splitStringToFloats(part)
 			case string(constants.MODIFIER_PROBABILITY):
 				s.Probability = splitStringToInts(part)
 			case string(constants.MODIFIER_GATE):

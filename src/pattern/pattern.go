@@ -9,13 +9,14 @@ import (
 )
 
 type Pattern struct {
-	Type  string
-	Name  string
-	Steps step.Steps
+	Type     string
+	Name     string
+	Original string
+	Steps    step.Steps
 }
 
 func Parse(s string) (p Pattern, err error) {
-	p = Pattern{}
+	p = Pattern{Original: s}
 	for _, line := range strings.Split(s, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
