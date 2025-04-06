@@ -18,17 +18,16 @@ type Notes struct {
 }
 
 type Step struct {
-	Original    string       `json:"original,omitempty"`
-	Iteration   int          `json:"iteration,omitempty"`
-	NotesString []string     `json:"notes_string,omitempty"`
-	Notes       []music.Note `json:"notes,omitempty"`
-	Velocity    []int        `json:"velocity,omitempty"`
-	Transpose   []int        `json:"transpose,omitempty"`
-	Probability []int        `json:"probability,omitempty"`
-	Arpeggio    []string     `json:"arpeggio,omitempty"`
-	Gate        []float64    `json:"gate,omitempty"`
-	TimeStart   float64      `json:"time_start,omitempty"`
-	Duration    float64      `json:"duration,omitempty"`
+	Original    string        `json:"original,omitempty"`
+	Iteration   int           `json:"iteration,omitempty"`
+	Notes       []music.Notes `json:"notes,omitempty"`
+	Velocity    []int         `json:"velocity,omitempty"`
+	Transpose   []int         `json:"transpose,omitempty"`
+	Probability []int         `json:"probability,omitempty"`
+	Arpeggio    []string      `json:"arpeggio,omitempty"`
+	Gate        []float64     `json:"gate,omitempty"`
+	TimeStart   float64       `json:"time_start,omitempty"`
+	Duration    float64       `json:"duration,omitempty"`
 }
 
 func (s Step) String() string {
@@ -78,7 +77,23 @@ func (s *Step) Parse() (err error) {
 	for i, part := range parts {
 		if i == 0 {
 			// First part is the note
-			s.NotesString = strings.Split(part, ",")
+			s.Notes = make([]music.Notes, 0)
+			lastMidi := 60
+			for _, noteString := range strings.Split(part, ",") {
+				if noteString == "" {
+					continue
+				}
+				noteObj, err := music.Parse(noteString, lastMidi)
+				if err != nil {
+					log.Errorf("Error parsing note: %s", err)
+					continue
+				}
+				s.Notes = append(s.Notes, music.Notes{
+					Original: noteString,
+					Note:     noteObj,
+				})
+				lastMidi = noteObj[len(noteObj)-1].MidiValue
+			}
 		} else {
 			// Subsequent parts are modifiers
 			switch delimiters[i-1] {

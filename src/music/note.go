@@ -9,13 +9,16 @@ import (
 	log "github.com/schollz/logger"
 )
 
+type Notes struct {
+	Original string
+	Note     []Note
+}
+
 type Note struct {
-	MidiValue  int
-	NameSharp  string
-	Frequency  float64
-	NamesOther []string
-	IsRest     bool
-	IsLegato   bool
+	MidiValue  int      `json:"midi_value,omitempty"`
+	NameSharp  string   `json:"name_sharp,omitempty"`
+	Frequency  float64  `json:"frequency,omitempty"`
+	NamesOther []string `json:"names_other,omitempty"`
 }
 
 func (n Note) Add(interval int) (result Note) {

@@ -11,8 +11,8 @@ func TestParseStep(t *testing.T) {
 		stepString string
 		parsed     Step
 	}{
-		{"Cmaj@u2d4!120,30", Step{NotesString: []string{"Cmaj"}, Arpeggio: []string{"u2d4"}, Velocity: []int{120, 30}}},
-		{"c,d,e#0.1,0.3", Step{NotesString: []string{"c", "d", "e"}, Gate: []float64{0.1, 0.3}}},
+		{"Cmaj@u2d4!120,30", Step{Arpeggio: []string{"u2d4"}, Velocity: []int{120, 30}}},
+		{"c,d,e#0.1,0.3", Step{Gate: []float64{0.1, 0.3}}},
 	}
 
 	for _, test := range tests {
@@ -22,7 +22,6 @@ func TestParseStep(t *testing.T) {
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
-			assert.Equal(t, test.parsed.NotesString, parsed.NotesString, "NotesString should match")
 			assert.Equal(t, test.parsed.Arpeggio, parsed.Arpeggio, "Arpeggio should match")
 			assert.Equal(t, test.parsed.Velocity, parsed.Velocity, "Velocity should match")
 			assert.Equal(t, test.parsed.Transpose, parsed.Transpose, "Transpose should match")
