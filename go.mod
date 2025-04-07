@@ -5,6 +5,7 @@ go 1.24
 require (
 	github.com/schollz/logger v1.2.0
 	github.com/stretchr/testify v1.10.0
+	gitlab.com/gomidi/midi/v2 v2.2.19
 )
 
 require (
