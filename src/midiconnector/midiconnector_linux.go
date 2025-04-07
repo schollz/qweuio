@@ -19,14 +19,14 @@ func init() {
 type Device struct {
 	name    string
 	num     int
-	notesOn map[uint8]bool
+	notesOn map[uint8]uint8
 }
 
 func New(name string) (*Device, error) {
 	var d Device
 	var err error
 	d.name, d.num, err = filterName(name)
-	d.notesOn = make(map[uint8]bool)
+	d.notesOn = make(map[uint8]uint8)
 	return &d, err
 }
 
@@ -59,8 +59,8 @@ func (d *Device) Open() (err error) {
 
 func (d *Device) Close() (err error) {
 	// send note off to every note
-	for note := range d.notesOn {
-		d.NoteOff(0, note)
+	for note, ch := range d.notesOn {
+		d.NoteOff(ch, note)
 	}
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -79,7 +79,7 @@ func (d *Device) NoteOn(channel, note, velocity uint8) (err error) {
 		if err != nil {
 			log.Error(err)
 		} else {
-			d.notesOn[note] = true
+			d.notesOn[note] = channel
 			log.Tracef("[%s] note on %d %d %d", d.name, channel, note, velocity)
 		}
 	}
