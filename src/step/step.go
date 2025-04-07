@@ -170,6 +170,11 @@ func (s *Steps) CalculateEnd() {
 		s.Step[i].TimeStart += s.Total
 	}
 	s.Total += 1.0
+	if len(s.Step) == 1 {
+		s.Step[0].TimeStart = 0
+		s.Step[0].Duration = 1.0
+		return
+	}
 
 	// Calculate end/durations
 	for i := 0; i < len(s.Step); i++ {

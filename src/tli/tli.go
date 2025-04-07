@@ -7,6 +7,8 @@ import (
 	"asdfgh/src/constants"
 	"asdfgh/src/expand_multiply"
 	"asdfgh/src/pattern"
+	"asdfgh/src/player"
+	"asdfgh/src/player/midi"
 	"asdfgh/src/step"
 
 	log "github.com/schollz/logger"
@@ -20,12 +22,13 @@ type Component struct {
 }
 
 type TLI struct {
-	BPM         float64     `json:"bpm,omitempty"`
-	Probability int         `json:"probability,omitempty"`
-	Velocity    int         `json:"velocity,omitempty"`
-	Transpose   float64     `json:"transpose,omitempty"`
-	Gate        float64     `json:"gate,omitempty"`
-	Components  []Component `json:"components,omitempty"`
+	BPM         float64         `json:"bpm,omitempty"`
+	Probability int             `json:"probability,omitempty"`
+	Velocity    int             `json:"velocity,omitempty"`
+	Transpose   float64         `json:"transpose,omitempty"`
+	Gate        float64         `json:"gate,omitempty"`
+	Components  []Component     `json:"components,omitempty"`
+	Players     []player.Player `json:"players,omitempty"`
 }
 
 func (t TLI) String() string {
@@ -43,11 +46,23 @@ func Parse(tliString string) (tli TLI, err error) {
 	orderingHas := make(map[string]bool)
 
 	for _, line := range strings.Split(tliString, "\n") {
-		line = strings.Join(strings.Fields(line), " ")
+		fields := strings.Fields(line)
+		line = strings.Join(fields, " ")
 		if line == "" || line[0] == '/' {
 			continue
 		}
-		if string(line[0]) == constants.SYMBOL_CHAIN {
+		if strings.ToLower(fields[0]) == "midi" {
+			midiName := strings.Join(fields[1:], " ")
+			var p player.Player
+			p, err = midi.New(midiName)
+			if err != nil {
+				log.Errorf("Error creating midi player: %s", err)
+				continue
+			} else {
+				log.Infof("Connected to midi device: %s", p)
+				tli.Players = append(tli.Players, p)
+			}
+		} else if string(line[0]) == constants.SYMBOL_CHAIN {
 			chains[string(line[1])] = line[1:]
 			if inPattern {
 				patterns[currentPatternName] = strings.TrimSpace(currentPattern)
