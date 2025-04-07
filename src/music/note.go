@@ -10,8 +10,8 @@ import (
 )
 
 type Notes struct {
-	Original string
-	Note     []Note
+	Original string `json:"original,omitempty"`
+	NoteList []Note `json:"note_list,omitempty"`
 }
 
 type Note struct {

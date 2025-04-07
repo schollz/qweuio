@@ -19,8 +19,8 @@ type Notes struct {
 
 type Step struct {
 	Original    string        `json:"original,omitempty"`
-	Iteration   int           `json:"iteration,omitempty"`
-	Notes       []music.Notes `json:"notes,omitempty"`
+	Iteration   int           `json:"iteration"`
+	NoteChoices []music.Notes `json:"note_choices,omitempty"`
 	Velocity    []int         `json:"velocity,omitempty"`
 	Probability []int         `json:"probability,omitempty"`
 	Arpeggio    []string      `json:"arpeggio,omitempty"`
@@ -79,7 +79,7 @@ func (s *Step) Parse(typeString string) (err error) {
 			switch typeString {
 			case string(constants.MODIFIER_NOTE):
 				// First part is the note
-				s.Notes = make([]music.Notes, 0)
+				s.NoteChoices = make([]music.Notes, 0)
 				lastMidi := 60
 				for _, noteString := range strings.Split(part, ",") {
 					if noteString == "" {
@@ -90,9 +90,9 @@ func (s *Step) Parse(typeString string) (err error) {
 						log.Errorf("Error parsing note: %s", err)
 						continue
 					}
-					s.Notes = append(s.Notes, music.Notes{
+					s.NoteChoices = append(s.NoteChoices, music.Notes{
 						Original: noteString,
-						Note:     noteObj,
+						NoteList: noteObj,
 					})
 					lastMidi = noteObj[len(noteObj)-1].MidiValue
 				}

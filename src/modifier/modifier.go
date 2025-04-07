@@ -7,9 +7,9 @@ import (
 )
 
 type ModifiedString struct {
-	Original   string
-	Unmodified string
-	Modifiers  []string
+	Original   string   `json:"original,omitempty"`   // Original string
+	Unmodified string   `json:"unmodified,omitempty"` // Unmodified part of the string
+	Modifiers  []string `json:"modifiers,omitempty"`  // List of modifiers
 }
 
 func Split(s string) (result ModifiedString) {
