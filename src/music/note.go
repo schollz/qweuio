@@ -62,17 +62,21 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 	midiString = strings.ToLower(midiString)
 
 	// check if split if it has multiple of any letter [a-g]
-	noteStrings := []string{}
+	noteStrings := make([]string, 100)
+	noteStringsI := 0
 	lastAdded := 0
 	for i := 1; i < len(midiString); i++ {
 		if midiString[i] >= 'a' && midiString[i] <= 'g' {
-			noteStrings = append(noteStrings, midiString[lastAdded:i])
+			noteStrings[noteStringsI] = midiString[lastAdded:i]
+			noteStringsI++
 			lastAdded = i
 		}
 	}
 	if lastAdded != len(midiString) {
-		noteStrings = append(noteStrings, midiString[lastAdded:])
+		noteStrings[noteStringsI] = midiString[lastAdded:]
+		noteStringsI++
 	}
+	noteStrings = noteStrings[:noteStringsI]
 	// log.Debugf("%s' -> %v", midiString, noteStrings)
 
 	// convert '#' to 's'

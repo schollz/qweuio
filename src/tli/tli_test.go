@@ -3,6 +3,7 @@ package tli
 import (
 	"encoding/json"
 	"os"
+	"runtime/pprof"
 	"testing"
 )
 
@@ -94,4 +95,23 @@ func TestParseTLI(t *testing.T) {
 	// parsed.Stop()
 	// time.Sleep(1 * time.Second)
 
+}
+
+func TestParseProfile(t *testing.T) {
+	// go tool pprof -http=":8080" cpu.prof
+	f, err := os.Create("cpu.prof")
+	if err != nil {
+		t.Fatalf("could not create CPU profile: %v", err)
+	}
+	defer f.Close()
+
+	if err := pprof.StartCPUProfile(f); err != nil {
+		t.Fatalf("could not start CPU profile: %v", err)
+	}
+	defer pprof.StopCPUProfile()
+
+	// Run the function enough times to get meaningful data
+	for i := 0; i < 1000; i++ {
+		Parse(tli1)
+	}
 }
