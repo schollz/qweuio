@@ -1,6 +1,7 @@
 package tli
 
 import (
+	"asdfgh/src/constants"
 	"asdfgh/src/player"
 	"time"
 
@@ -63,18 +64,28 @@ func (t *TLI) Emit() (err error) {
 		for j, step := range component.ChainSteps {
 			if step.TimeStart <= cts[1] && step.TimeStart > cts[0] {
 				log.Tracef("[%2.3f] [%s] %s (%d)", step.TimeStart, component.Type, step.Original, step.Iteration)
-				t.Components[i].ChainSteps[j].Iteration++
-				for _, p := range t.Players {
-					ops := player.Options{
-						Channel:   5,
-						Velocity:  120,
-						Gate:      0.5,
-						Transpose: 0,
+				if component.Type == constants.MODIFIER_NOTE {
+					for _, p := range t.Players {
+						ops := player.Options{
+							Channel:   5,
+							Velocity:  t.Velocity,
+							Gate:      t.Gate,
+							Transpose: 0,
+						}
+						if err := player.Play(p, step, ops); err != nil {
+							log.Errorf("Error playing step: %s", err)
+						}
 					}
-					if err := player.Play(p, step, ops); err != nil {
-						log.Errorf("Error playing step: %s", err)
-					}
+				} else if component.Type == constants.MODIFIER_VELOCITY && len(step.Velocity) > 0 {
+					t.Velocity = step.Velocity[step.Iteration%len(step.Velocity)]
+				} else if component.Type == constants.MODIFIER_TRANSPOSE && len(step.Transpose) > 0 {
+					t.Transpose = step.Transpose[step.Iteration%len(step.Transpose)]
+				} else if component.Type == constants.MODIFIER_PROBABILITY && len(step.Probability) > 0 {
+					t.Probability = int(step.Probability[step.Iteration%len(step.Probability)])
+				} else if component.Type == constants.MODIFIER_GATE && len(step.Gate) > 0 {
+					t.Gate = step.Gate[step.Iteration%len(step.Gate)]
 				}
+				t.Components[i].ChainSteps[j].Iteration++
 			}
 		}
 	}

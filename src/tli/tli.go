@@ -85,6 +85,30 @@ func Parse(tliString string) (tli TLI, err error) {
 			} else {
 				log.Warnf("No BPM value provided")
 			}
+		} else if strings.ToLower(fields[0]) == "probability" {
+			if len(fields) > 1 {
+				if tli.Probability, err = strconv.Atoi(fields[1]); err != nil {
+					log.Errorf("Error parsing probability: %s", err)
+				}
+			} else {
+				log.Warnf("No probability value provided")
+			}
+		} else if strings.ToLower(fields[0]) == "velocity" {
+			if len(fields) > 1 {
+				if tli.Velocity, err = strconv.Atoi(fields[1]); err != nil {
+					log.Errorf("Error parsing velocity: %s", err)
+				}
+			} else {
+				log.Warnf("No velocity value provided")
+			}
+		} else if strings.ToLower(fields[0]) == "gate" {
+			if len(fields) > 1 {
+				if tli.Gate, err = strconv.ParseFloat(fields[1], 64); err != nil {
+					log.Errorf("Error parsing gate: %s", err)
+				}
+			} else {
+				log.Warnf("No gate value provided")
+			}
 		} else if string(line[0]) == constants.SYMBOL_CHAIN {
 			chains[string(line[1])] = line[1:]
 			if inPattern {
@@ -187,6 +211,16 @@ func Parse(tliString string) (tli TLI, err error) {
 			tli.Components[i].ChainSteps[j].Duration *= 60.0 / tli.BPM * 4.0
 			tli.Components[i].ChainSteps[j].TimeStart *= 60.0 / tli.BPM * 4.0
 		}
+	}
+
+	if tli.Velocity <= 0 {
+		tli.Velocity = 100
+	}
+	if tli.Probability <= 0 {
+		tli.Probability = 100
+	}
+	if tli.Gate <= 0.0 {
+		tli.Gate = 0.5
 	}
 	return
 }
