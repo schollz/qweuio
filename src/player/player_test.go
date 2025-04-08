@@ -40,7 +40,13 @@ func TestPlaying(t *testing.T) {
 	err = step.Parse(constants.MODIFIER_NOTE)
 	step.Duration = 0.5
 	log.Tracef("Parsed step: %+v", step)
-	err = Play(p, 5, step)
+	err = Play(p, step, Options{
+		Channel:     5,
+		Velocity:    70,
+		Transpose:   1,
+		Probability: 0.5,
+		Gate:        0.5,
+	})
 	assert.Nil(t, err)
 
 	time.Sleep(3 * time.Second)

@@ -1,12 +1,9 @@
 package tli
 
 import (
-	"asdfgh/src/player"
 	"encoding/json"
 	"os"
 	"testing"
-
-	log "github.com/schollz/logger"
 )
 
 func TestParseTLI(t *testing.T) {
@@ -43,9 +40,6 @@ $ tb
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-
-	log.Tracef("parsed.Components[0].ChainSteps[0]: %+v", parsed.Components[0].ChainSteps[0])
-	player.Play(parsed.Players[0], parsed.Components[0].ChainSteps[0])
 
 	// write parsed to a file out.json
 	b, _ := json.MarshalIndent(parsed, "", "  ")

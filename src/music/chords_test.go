@@ -2,13 +2,9 @@ package music
 
 import (
 	"testing"
-
-	log "github.com/schollz/logger"
 )
 
 func TestParseChord(t *testing.T) {
-	log.SetLevel("trace")
-
 	// table driven tests
 	tests := []struct {
 		chordString string

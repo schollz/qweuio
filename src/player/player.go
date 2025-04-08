@@ -13,7 +13,15 @@ type Player interface {
 	Close() error
 }
 
-func Play(p Player, channel int, step step.Step) error {
+type Options struct {
+	Channel     int
+	Velocity    int
+	Gate        float64
+	Transpose   float64
+	Probability float64
+}
+
+func Play(p Player, step step.Step, ops Options) error {
 	if len(step.NoteChoices) == 0 {
 		return nil
 	}
@@ -22,15 +30,15 @@ func Play(p Player, channel int, step step.Step) error {
 	noteChoiceNum := step.Iteration % len(step.NoteChoices)
 	// TODO if arpeggio, use the note list to generate the arpeggio
 	for _, note := range step.NoteChoices[noteChoiceNum].NoteList {
-		if err := p.NoteOn(channel, note.MidiValue, 100); err != nil {
+		if err := p.NoteOn(ops.Channel, note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
 			log.Errorf("Error playing note: %s", err)
 		}
 	}
 	go func() {
 		// Wait for the duration of the step
-		time.Sleep(time.Duration(int(step.Duration*1000000)) * time.Microsecond)
+		time.Sleep(time.Duration(int(step.Duration*1000000.0*ops.Gate)) * time.Microsecond)
 		for _, note := range step.NoteChoices[noteChoiceNum].NoteList {
-			if err := p.NoteOff(channel, note.MidiValue); err != nil {
+			if err := p.NoteOff(ops.Channel, note.MidiValue+int(ops.Transpose)); err != nil {
 				log.Errorf("Error stopping note: %s", err)
 			}
 		}
