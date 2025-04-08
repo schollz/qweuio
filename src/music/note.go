@@ -32,15 +32,17 @@ func (n Note) Add(interval int) (result Note) {
 	return
 }
 
-func findMaxPrefix(a string, b string) string {
-	i := 0
-	for i < len(a) && i < len(b) {
-		if a[i] != b[i] {
-			break
-		}
-		i++
+func findMaxPrefix(a, b string) string {
+	n := len(a)
+	if len(b) < n {
+		n = len(b)
 	}
-	return a[:i]
+	for i := 0; i < n; i++ {
+		if a[i] != b[i] {
+			return a[:i]
+		}
+	}
+	return a[:n]
 }
 
 func exactMatch(n string) (note Note, ok bool) {
