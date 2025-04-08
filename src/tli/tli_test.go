@@ -46,8 +46,8 @@ bpm 120
 +# a
 
 # a
-Am;3
-C/G;4
+Am;3@u11d8
+C/G;4@u6d8u4
 `
 	parsed, err := Parse(tli)
 	if err != nil {

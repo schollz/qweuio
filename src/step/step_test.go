@@ -19,7 +19,7 @@ func TestParseStep(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.stepString, func(t *testing.T) {
 			parsed := Step{Original: test.stepString}
-			err := parsed.Parse(constants.MODIFIER_NOTE)
+			_, err := parsed.Parse(constants.MODIFIER_NOTE, 60)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

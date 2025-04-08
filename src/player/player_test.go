@@ -37,7 +37,7 @@ func TestPlaying(t *testing.T) {
 
 	stepString := "Cmaj@u2d4!120,30"
 	step := step.Step{Original: stepString}
-	err = step.Parse(constants.MODIFIER_NOTE)
+	_, err = step.Parse(constants.MODIFIER_NOTE, 60)
 	step.Duration = 0.5
 	log.Tracef("Parsed step: %+v", step)
 	err = Play(p, step, Options{
