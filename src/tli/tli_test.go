@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestParseTLI(t *testing.T) {
 	tli := `
 midi virtual 
+bpm 240
 
 +# [first_part second_part] * 2 second_part
 
@@ -36,6 +38,17 @@ $ tb
 
 
 `
+
+	tli = `
+midi op-z
+bpm 120
+
++# a
+
+# a
+Am;3
+C/G;4
+`
 	parsed, err := Parse(tli)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -46,4 +59,13 @@ $ tb
 	f, _ := os.Create("out.json")
 	defer f.Close()
 	f.Write(b)
+
+	// play it
+	parsed.Play()
+	time.Sleep(12 * time.Second)
+
+	// stop
+	parsed.Stop()
+	time.Sleep(1 * time.Second)
+
 }

@@ -67,7 +67,8 @@ func splitStringToFloats(s string) (result []float64) {
 	return
 }
 
-func (s *Step) Parse(typeString string) (err error) {
+func (s *Step) Parse(typeString string, lastMidiArg int) (lastMidi int, err error) {
+	lastMidi = lastMidiArg
 	// uses Orgnal string to parse the step
 	// Split the string by capturing the delimiters.
 	parts := regexpParseModifiers.Split(s.Original, -1)
@@ -80,7 +81,6 @@ func (s *Step) Parse(typeString string) (err error) {
 			case string(constants.MODIFIER_NOTE):
 				// First part is the note
 				s.NoteChoices = make([]music.Notes, 0)
-				lastMidi := 60
 				for _, noteString := range strings.Split(part, ",") {
 					if noteString == "" {
 						continue
@@ -123,8 +123,8 @@ func (s *Step) Parse(typeString string) (err error) {
 			}
 		}
 	}
-	b, _ := json.Marshal(s)
-	log.Tracef("step: %s", b)
+	// b, _ := json.Marshal(s)
+	// log.Tracef("step: %s", b)
 	return
 }
 
@@ -209,8 +209,11 @@ func (s *Steps) ClearRests() {
 
 func (s *Steps) Parse(typeString string) {
 	// Parse each step
+	lastMidi := 60
+	var err error
 	for i := range s.Step {
-		if err := s.Step[i].Parse(typeString); err != nil {
+		lastMidi, err = s.Step[i].Parse(typeString, lastMidi)
+		if err != nil {
 			log.Errorf("Error parsing step: %s", err)
 		}
 	}
