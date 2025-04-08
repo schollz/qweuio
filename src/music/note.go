@@ -5,9 +5,13 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync"
 
 	log "github.com/schollz/logger"
 )
+
+var cacheParseNote = make(map[string][]Note)
+var cacheParseNoteMutex sync.Mutex
 
 type Notes struct {
 	Original string `json:"original,omitempty"`
@@ -57,6 +61,14 @@ func exactMatch(n string) (note Note, ok bool) {
 }
 
 func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
+	cacheParseNoteMutex.Lock()
+	defer cacheParseNoteMutex.Unlock()
+	parseNoteKey := fmt.Sprintf("%s%d", midiString, midiNear)
+	if v, ok := cacheParseNote[parseNoteKey]; ok {
+		notes = v
+		return
+	}
+
 	log.Tracef("ParseNote(%s, %d)", midiString, midiNear)
 	// can be a single midi note like "c" in which case we need to find the closest note to midiNear
 	// or can be a single note like "c4" in which case we want an exact match
@@ -81,13 +93,10 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 	noteStrings = noteStrings[:noteStringsI]
 	// log.Debugf("%s' -> %v", midiString, noteStrings)
 
-	// convert '#' to 's'
 	for i, n := range noteStrings {
+		// convert '#' to 's'
 		noteStrings[i] = strings.Replace(n, "#", "s", -1)
-	}
-
-	// convert '♭' to 'b'
-	for i, n := range noteStrings {
+		// convert '♭' to 'b'
 		noteStrings[i] = strings.Replace(n, "♭", "b", -1)
 	}
 
@@ -130,6 +139,10 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 	}
 
 	log.Tracef("%+v -> %v", midiString, notes)
+
+	// cache the result
+	cacheParseNote[parseNoteKey] = notes
+
 	return
 
 }
