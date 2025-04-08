@@ -45,7 +45,7 @@ func findMaxPrefix(a string, b string) string {
 
 func exactMatch(n string) (note Note, ok bool) {
 	for _, m := range noteDB {
-		for _, noteFullName := range append(m.NamesOther, m.NameSharp) {
+		for _, noteFullName := range m.NamesOther {
 			if n == noteFullName {
 				return Note{MidiValue: m.MidiValue, NameSharp: m.NameSharp}, true
 			}
@@ -101,7 +101,7 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 			closestDistance := math.Inf(1)
 			for _, m := range noteDB {
 				for octave := -1; octave <= 8; octave++ {
-					for _, noteFullName := range append(m.NamesOther, m.NameSharp) {
+					for _, noteFullName := range m.NamesOther {
 						noteName := findMaxPrefix(n, noteFullName)
 						if noteName != "" && (noteName == noteFullName || (noteName+strconv.Itoa(octave)) == noteFullName) {
 							if math.Abs(float64(m.MidiValue-midiNear)) < closestDistance {

@@ -3,6 +3,7 @@
 #
 # Binaries for programs and plugins
 asdfgh
+src/tli/cpu.prof
 *.exe
 *.exe~
 *.dll

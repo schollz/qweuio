@@ -322,4 +322,8 @@ func init() {
 	for i, n := range noteDB {
 		noteDB[i].NameSharp = strings.ToLower(n.NameSharp)
 	}
+	// add name sharp into nameother
+	for i, n := range noteDB {
+		noteDB[i].NamesOther = append(noteDB[i].NamesOther, n.NameSharp)
+	}
 }
