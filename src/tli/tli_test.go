@@ -6,9 +6,7 @@ import (
 	"testing"
 )
 
-func TestParseTLI(t *testing.T) {
-	tli := `
-midi virtual 
+var tli1 = `
 bpm 240
 
 +# [first_part second_part] * 2 second_part
@@ -34,9 +32,35 @@ $ ta
 
 $ tb
 3 4
-
-
 `
+
+func BenchmarkParseTLI(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, err := Parse(tli1)
+		if err != nil {
+			b.Fatalf("unexpected error: %v", err)
+		}
+	}
+}
+
+func BenchmarkCopyTLI(b *testing.B) {
+	t1, err := Parse(tli1)
+	if err != nil {
+		b.Fatalf("unexpected error: %v", err)
+	}
+	t2, err := Parse(tli1)
+	if err != nil {
+		b.Fatalf("unexpected error: %v", err)
+	}
+	for i := 0; i < b.N; i++ {
+		err = t1.Copy(t2)
+		if err != nil {
+			b.Fatalf("unexpected error: %v", err)
+		}
+	}
+}
+
+func TestParseTLI(t *testing.T) {
 
 	// 	tli = `
 	// midi op-z
@@ -51,7 +75,7 @@ $ tb
 	// c4,d4,c4 e g b,a
 
 	// `
-	parsed, err := Parse(tli)
+	parsed, err := Parse(tli1)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

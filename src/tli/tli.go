@@ -4,44 +4,15 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
-	"sync"
-	"time"
 
 	"asdfgh/src/constants"
 	"asdfgh/src/expand_multiply"
 	"asdfgh/src/pattern"
 	"asdfgh/src/player"
 	"asdfgh/src/player/midi"
-	"asdfgh/src/step"
 
 	log "github.com/schollz/logger"
 )
-
-type Component struct {
-	Type          string                     `json:"type,omitempty"`
-	Chain         []string                   `json:"chain,omitempty"`
-	Patterns      map[string]pattern.Pattern `json:"patterns,omitempty"`
-	ChainSteps    []step.Step                `json:"chain_steps,omitempty"`
-	ChainDuration float64                    `json:"chain_duration,omitempty"`
-}
-
-type TLI struct {
-	BPM        float64         `json:"bpm,omitempty"`
-	Components []Component     `json:"components,omitempty"`
-	Players    []player.Player `json:"players,omitempty"`
-	// for realtime playback
-	Probability int     `json:"probability,omitempty"`
-	Velocity    int     `json:"velocity,omitempty"`
-	Transpose   float64 `json:"transpose,omitempty"`
-	Gate        float64 `json:"gate,omitempty"`
-	// create a mutex
-	mutex sync.Mutex
-	// create a channel for stopping playback
-	stopChan    chan bool
-	isPlaying   bool
-	lastSeconds float64
-	startTime   time.Time
-}
 
 func (t TLI) String() string {
 	b, _ := json.MarshalIndent(t, "", "  ")
@@ -71,7 +42,7 @@ func Parse(tliString string) (tli TLI, err error) {
 			var p player.Player
 			p, err = midi.New(midiName)
 			if err != nil {
-				log.Errorf("Error creating midi player: %s", err)
+				log.Warnf("Error creating midi player: %s", err)
 				continue
 			} else {
 				log.Infof("Connected to midi device: %s", p)
@@ -80,7 +51,7 @@ func Parse(tliString string) (tli TLI, err error) {
 		} else if strings.ToLower(fields[0]) == "bpm" {
 			if len(fields) > 1 {
 				if tli.BPM, err = strconv.ParseFloat(fields[1], 64); err != nil {
-					log.Errorf("Error parsing BPM: %s", err)
+					log.Warnf("Error parsing BPM: %s", err)
 				}
 			} else {
 				log.Warnf("No BPM value provided")
@@ -88,7 +59,7 @@ func Parse(tliString string) (tli TLI, err error) {
 		} else if strings.ToLower(fields[0]) == "probability" {
 			if len(fields) > 1 {
 				if tli.Probability, err = strconv.Atoi(fields[1]); err != nil {
-					log.Errorf("Error parsing probability: %s", err)
+					log.Warnf("Error parsing probability: %s", err)
 				}
 			} else {
 				log.Warnf("No probability value provided")
