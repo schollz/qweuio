@@ -2,6 +2,8 @@ package music
 
 import (
 	"fmt"
+	"os"
+	"runtime/pprof"
 	"testing"
 )
 
@@ -13,6 +15,37 @@ func TestNote(t *testing.T) {
 	}
 	fmt.Println(n2)
 
+}
+
+func BenchmarkParseNote(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ParseNote("f#3", 60)
+		ParseNote("c", 60)
+		ParseNote("g♭c", 60)
+		ParseNote("c4eg", 60)
+	}
+}
+
+func TestNoteProfile(t *testing.T) {
+	// go tool pprof -http=":8080" cpu.prof
+	f, err := os.Create("cpu.prof")
+	if err != nil {
+		t.Fatalf("could not create CPU profile: %v", err)
+	}
+	defer f.Close()
+
+	if err := pprof.StartCPUProfile(f); err != nil {
+		t.Fatalf("could not start CPU profile: %v", err)
+	}
+	defer pprof.StopCPUProfile()
+
+	// Run the function enough times to get meaningful data
+	for i := 0; i < 10000; i++ {
+		ParseNote("f#3", 60)
+		ParseNote("c", 60)
+		ParseNote("g♭c", 60)
+		ParseNote("c4eg", 60)
+	}
 }
 
 func TestParseNote(t *testing.T) {

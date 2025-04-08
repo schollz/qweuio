@@ -101,9 +101,10 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 			closestDistance := math.Inf(1)
 			for _, m := range noteDB {
 				for octave := -1; octave <= 8; octave++ {
+					octaveString := strconv.Itoa(octave)
 					for _, noteFullName := range m.NamesOther {
 						noteName := findMaxPrefix(n, noteFullName)
-						if noteName != "" && (noteName == noteFullName || (noteName+strconv.Itoa(octave)) == noteFullName) {
+						if noteName != "" && (noteName == noteFullName || (noteName+octaveString) == noteFullName) {
 							if math.Abs(float64(m.MidiValue-midiNear)) < closestDistance {
 								closestDistance = math.Abs(float64(m.MidiValue - midiNear))
 								log.Tracef("found %s %d", noteFullName, m.MidiValue)
