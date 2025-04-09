@@ -67,7 +67,6 @@ func (t *TLI) Emit() (err error) {
 				if component.Type == constants.MODIFIER_NOTE {
 					for _, p := range t.Players {
 						ops := player.Options{
-							Channel:   5,
 							Velocity:  t.Velocity,
 							Gate:      t.Gate,
 							Transpose: 0,

@@ -7,22 +7,21 @@ import (
 )
 
 type Player struct {
-	Name   string
-	Device *midiconnector.Device
-	opened bool
+	Name    string
+	Device  *midiconnector.Device
+	opened  bool
+	channel uint8
 }
 
-func New(name string) (p *Player, err error) {
-	p0 := Player{Name: name}
+func New(name string, channel int) (p *Player, err error) {
+	p0 := Player{Name: name, channel: uint8(channel)}
 	p0.Device, err = midiconnector.New(name)
-	p = &p0
-	if err == nil {
-		log.Infof("connected to %+v", p.Device)
-	}
-	err = p.Device.Open()
 	if err != nil {
 		log.Errorf("Error opening device: %s", err)
+		return
 	} else {
+		p = &p0
+		err = p.Device.Open()
 		p.opened = true
 	}
 	return
@@ -41,18 +40,18 @@ func (m *Player) Close() (err error) {
 	return
 }
 
-func (m *Player) NoteOn(ch int, note int, velocity int) (err error) {
-	log.Tracef("note_on  (%d,%d,%d)\n", ch, note, velocity)
+func (m *Player) NoteOn(note int, velocity int) (err error) {
+	log.Tracef("note_on  (%d,%d,%d)\n", m.channel, note, velocity)
 	if m.opened {
-		err = m.Device.NoteOn(uint8(ch), uint8(note), uint8(velocity))
+		err = m.Device.NoteOn(m.channel, uint8(note), uint8(velocity))
 	}
 	return
 }
 
-func (m *Player) NoteOff(ch int, note int) (err error) {
-	log.Tracef("note_off (%d,%d)", ch, note)
+func (m *Player) NoteOff(note int) (err error) {
+	log.Tracef("note_off (%d,%d)", m.channel, note)
 	if m.opened {
-		err = m.Device.NoteOff(uint8(ch), uint8(note))
+		err = m.Device.NoteOff(m.channel, uint8(note))
 	}
 	return
 }

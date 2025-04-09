@@ -15,13 +15,12 @@ const ARPEGGIO_UP = "u"
 const ARPEGGIO_DOWN = "d"
 
 type Player interface {
-	NoteOn(ch int, note int, velocity int) error
-	NoteOff(ch int, note int) error
+	NoteOn(note int, velocity int) error
+	NoteOff(note int) error
 	Close() error
 }
 
 type Options struct {
-	Channel     int
 	Velocity    int
 	Gate        float64
 	Transpose   float64
@@ -39,7 +38,7 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 	noteList := step.NoteChoices[noteChoiceNum].NoteList
 	if len(step.Arpeggio) == 0 {
 		for _, note := range noteList {
-			if err := p.NoteOn(ops.Channel, note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
+			if err := p.NoteOn(note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}
 		}
@@ -47,7 +46,7 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 			// Wait for the duration of the step
 			time.Sleep(time.Duration(int(step.Duration*1000000.0*ops.Gate)) * time.Microsecond)
 			for _, note := range noteList {
-				if err := p.NoteOff(ops.Channel, note.MidiValue+int(ops.Transpose)); err != nil {
+				if err := p.NoteOff(note.MidiValue + int(ops.Transpose)); err != nil {
 					log.Errorf("Error stopping note: %s", err)
 				}
 			}
@@ -106,12 +105,12 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 		log.Tracef("noteListArpeggio: %v", noteListArpeggio)
 		durationPerNote := step.Duration / float64(len(noteListArpeggio))
 		for _, note := range noteListArpeggio {
-			if err = p.NoteOn(ops.Channel, note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
+			if err = p.NoteOn(note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}
 			go func(note music.Note) {
 				time.Sleep(time.Duration(int(durationPerNote*ops.Gate*1000000.0)) * time.Microsecond)
-				if err = p.NoteOff(ops.Channel, note.MidiValue+int(ops.Transpose)); err != nil {
+				if err = p.NoteOff(note.MidiValue + int(ops.Transpose)); err != nil {
 					log.Errorf("Error stopping note: %s", err)
 				}
 			}(note)

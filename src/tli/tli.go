@@ -38,14 +38,18 @@ func Parse(tliString string) (tli TLI, err error) {
 			continue
 		}
 		if strings.ToLower(fields[0]) == "midi" {
-			midiName := strings.Join(fields[1:], " ")
+			midiName := fields[1]
+			channel := 1
+			if len(fields) > 2 {
+				channel, _ = strconv.Atoi(fields[2])
+			}
 			var p player.Player
-			p, err = midi.New(midiName)
+			p, err = midi.New(midiName, channel)
 			if err != nil {
 				log.Warnf("Error creating midi player: %s", err)
 				continue
 			} else {
-				log.Infof("Connected to midi device: %s", p)
+				log.Debugf("connected: %+v", p)
 				tli.Players = append(tli.Players, p)
 			}
 		} else if strings.ToLower(fields[0]) == "bpm" {
@@ -114,8 +118,18 @@ func Parse(tliString string) (tli TLI, err error) {
 		var chainString string
 		var ok bool
 		if chainString, ok = chains[t]; !ok {
-			log.Warnf("Chain %s not found", t)
-			continue
+			// use the first pattern string
+			// if no chain is found
+			if len(patterns) > 0 {
+				for k := range patterns {
+					chainString = k
+					break
+				}
+				chains[t] = chainString
+			} else {
+				log.Warnf("No chain found for %s", t)
+				continue
+			}
 		}
 		// find all the patterns for this chain
 		chainString = strings.TrimSpace(chainString[1:])
