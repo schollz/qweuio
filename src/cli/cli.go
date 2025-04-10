@@ -4,9 +4,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
+	"asdfgh/src/constants"
 	"asdfgh/src/tli"
 
 	"github.com/fsnotify/fsnotify"
@@ -15,7 +17,7 @@ import (
 
 type CLI struct {
 	Filename string
-	TLI      *tli.TLI
+	TLI      []*tli.TLI
 }
 
 // Init initializes the CLI with the given filename and starts watching for changes.
@@ -47,11 +49,46 @@ func (cli *CLI) load() error {
 		return err
 	}
 
-	tliParsed, err := tli.Parse(string(data))
-	if err != nil {
-		return err
+	// split the file when the line equals SYMBOL_BREAK
+	var pieces []string
+	var piece string
+	for _, line := range strings.Split(string(data), "\n") {
+		if line == constants.SYMBOL_BREAK {
+			piece = strings.TrimSpace(piece)
+			if piece != "" {
+				pieces = append(pieces, piece)
+			}
+			piece = ""
+		} else {
+			piece += string(line) + "\n"
+		}
 	}
-	cli.TLI = &tliParsed
+	if piece != "" {
+		pieces = append(pieces, piece)
+	}
+
+	tlis := make([]*tli.TLI, len(pieces))
+	for i, piece := range pieces {
+		tliParsed, err := tli.Parse(piece)
+		if err != nil {
+			return err
+		}
+		tlis[i] = &tliParsed
+	}
+
+	if len(tlis) == len(cli.TLI) {
+		// do copying
+		log.Debugf("before copy: %+v", cli.TLI[0].Components[0])
+		for i := range tlis {
+			cli.TLI[i].Copy(*tlis[i])
+		}
+		log.Debugf("after copy: %+v", cli.TLI[0].Components[0])
+	} else {
+		cli.TLI = make([]*tli.TLI, len(tlis))
+		for i := range tlis {
+			cli.TLI[i] = tlis[i]
+		}
+	}
 
 	log.Debug("Loaded TLI from file.")
 	return nil
@@ -80,19 +117,7 @@ func (cli *CLI) watchFile() {
 
 	triggerReload := func() {
 		time.Sleep(10 * time.Millisecond) // wait for file to sync
-		b, err := os.ReadFile(cli.Filename)
-		if err != nil {
-			log.Error("Error reading file:", err)
-			return
-		}
-		tliNew, err := tli.Parse(string(b))
-		if err != nil {
-			log.Error("Error parsing TLI:", err)
-			return
-		}
-		log.Infof("Before reload: %+v", cli.TLI.Components[0].ChainSteps[0])
-		cli.TLI.Copy(tliNew)
-		log.Infof("After reload: %+v", cli.TLI.Components[0].ChainSteps[0])
+		cli.load()
 	}
 
 	for {

@@ -38,7 +38,7 @@ func main() {
 			log.Errorf("Error opening file: %s", err)
 			os.Exit(1)
 		} else {
-			log.Infof("Parsed %s into %d components", file, len(clis[i].TLI.Components))
+			log.Infof("Parsed %s into %d components", file, len(clis[i].TLI[0].Components))
 		}
 	}
 	// play all of them
