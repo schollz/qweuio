@@ -209,3 +209,7 @@ func Parse(tliString string) (tli TLI, err error) {
 	}
 	return
 }
+
+func (tli TLI) IsPlaying() bool {
+	return tli.isPlaying
+}

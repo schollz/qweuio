@@ -84,15 +84,40 @@ func (cli *CLI) load() error {
 		}
 		log.Debugf("after copy: %+v", cli.TLI[0].Components[0])
 	} else {
+		isPlaying := len(cli.TLI) > 0 && cli.TLI[0].IsPlaying()
+		if len(cli.TLI) > 0 && isPlaying {
+			cli.Stop()
+		}
 		cli.TLI = make([]*tli.TLI, len(tlis))
-		for i := range tlis {
-			cli.TLI[i] = tlis[i]
+		for i, tliParsed := range tlis {
+			cli.TLI[i] = tliParsed
+		}
+		if isPlaying {
+			cli.Play()
 		}
 	}
 
 	log.Debug("Loaded TLI from file.")
 	return nil
 }
+
+func (cli *CLI) Stop() (err error) {
+	for _, tli := range cli.TLI {
+		tli.Stop()
+	}
+	return
+}
+
+func (cli *CLI) Play() (err error) {
+	for _, tli := range cli.TLI {
+		if err = tli.Play(); err != nil {
+			log.Error("Error playing TLI:", err)
+			return
+		}
+	}
+	return
+}
+
 func (cli *CLI) watchFile() {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {

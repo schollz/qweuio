@@ -38,12 +38,13 @@ func main() {
 			log.Errorf("Error opening file: %s", err)
 			os.Exit(1)
 		} else {
+			log.Debugf("%+v", clis[i])
 			log.Infof("Parsed %s into %d components", file, len(clis[i].TLI[0].Components))
 		}
 	}
 	// play all of them
 	for _, cli := range clis {
-		if err := cli.TLI.Play(); err != nil {
+		if err := cli.Play(); err != nil {
 			log.Errorf("Error playing TLI: %s", err)
 			os.Exit(1)
 		}
@@ -55,7 +56,7 @@ func main() {
 	<-c
 	log.Debugf("Received interrupt signal, stopping playback")
 	for _, cli := range clis {
-		cli.TLI.Stop()
+		cli.Stop()
 	}
 	time.Sleep(1 * time.Second)
 }
