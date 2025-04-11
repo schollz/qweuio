@@ -543,29 +543,25 @@ html.dark .brutal-brand {
 }
 
 .shiny {
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     animation: variableAnimation 10s linear infinite;
     font-size: 1.6em;
     box-sizing: border-box;
-    display: inline;
+    padding-top: 0.75em;
     margin: 0 !important;
-    margin-top: -0.5em !important;
+    margin-top: 0.5em !important;
     margin-left: 0.5em !important;
-}
-
-html.dark .shiny {
-    background: linear-gradient(to right, #54b654 20%, #8acd8a 40%, #54b654 60%, #8acd8a 80%, #54b654 100%);
-    color: #000000;
-    background-size: 100px;
-    background-clip: text;
+    line-height: 1.2em;
 }
 
 .shiny {
-    background: linear-gradient(to right, #b65454 20%, #cd8a8a 40%, #b65454 60%, #cd8a8a 80%, #b65454 100%);
-    background-size: 200px;
-    background-clip: text;
-    color: transparent;
+    background-color: var(--vp-code-block-bg);
+    color: #b65454;
+}
+
+
+html.dark .shiny {
+    background-color: var(--vp-code-block-bg);
+    color: #54b654;
 }
 
 .shiny+p {

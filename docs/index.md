@@ -2,10 +2,11 @@
 
 **asdfgh** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
 
-```tli
+
+<pre class="shiny box">
 midi op-z
 c4 d4 e4 f4
-```
+</pre>
 
 # quickstart {#quickstart}
 
