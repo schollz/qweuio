@@ -1,4 +1,4 @@
-module asdfgh
+module qweuio
 
 go 1.24
 

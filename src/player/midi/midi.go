@@ -1,7 +1,7 @@
 package midi
 
 import (
-	"asdfgh/src/midiconnector"
+	"qweuio/src/midiconnector"
 
 	log "github.com/schollz/logger"
 )

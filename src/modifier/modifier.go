@@ -1,7 +1,7 @@
 package modifier
 
 import (
-	"asdfgh/src/constants"
+	"qweuio/src/constants"
 	"regexp"
 	"strings"
 )

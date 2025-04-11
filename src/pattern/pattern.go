@@ -1,8 +1,8 @@
 package pattern
 
 import (
-	"asdfgh/src/expand_line"
-	"asdfgh/src/step"
+	"qweuio/src/expand_line"
+	"qweuio/src/step"
 	"strings"
 
 	log "github.com/schollz/logger"

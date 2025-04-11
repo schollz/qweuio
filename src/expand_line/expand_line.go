@@ -1,8 +1,8 @@
 package expand_line
 
 import (
-	"asdfgh/src/expand_multiply"
-	"asdfgh/src/step"
+	"qweuio/src/expand_multiply"
+	"qweuio/src/step"
 	"strings"
 	"unicode"
 

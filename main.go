@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"asdfgh/src/cli"
+	"qweuio/src/cli"
 
 	log "github.com/schollz/logger"
 )

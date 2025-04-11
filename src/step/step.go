@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"asdfgh/src/constants"
-	"asdfgh/src/music"
+	"qweuio/src/constants"
+	"qweuio/src/music"
 
 	log "github.com/schollz/logger"
 )

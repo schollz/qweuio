@@ -1,8 +1,8 @@
 package player
 
 import (
-	"asdfgh/src/music"
-	"asdfgh/src/step"
+	"qweuio/src/music"
+	"qweuio/src/step"
 	"fmt"
 	"regexp"
 	"strconv"

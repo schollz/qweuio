@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"asdfgh/src/constants"
-	"asdfgh/src/tli"
+	"qweuio/src/constants"
+	"qweuio/src/tli"
 
 	"github.com/fsnotify/fsnotify"
 	log "github.com/schollz/logger"

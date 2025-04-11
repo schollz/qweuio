@@ -1,7 +1,7 @@
 package expand_multiply
 
 import (
-	"asdfgh/src/constants"
+	"qweuio/src/constants"
 	"fmt"
 	"strconv"
 	"strings"

@@ -1,6 +1,6 @@
-# asdfgh 
+# qweuio 
 
-**asdfgh** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
+**qweuio** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
 
 
 <pre class="shiny box">
@@ -10,10 +10,10 @@ c4 d4 e4 f4
 
 # quickstart {#quickstart}
 
-First install **asdfgh**:
+First install **qweuio**:
 
 ```bash
-curl https://asdfgh.schollz.com/install.sh | bash
+curl https://qweuio.schollz.com/install.sh | bash
 ```
 
 Now create a simple file called `first.tli`:
@@ -25,7 +25,7 @@ echo "c4 d4 e4 f4" > first.tli
 Then run the program:
 
 ```
-asdfgh first.tli 
+qweuio first.tli 
 ```
 
 This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using the first available MIDI device. You can also specify a different MIDI device by editing the `first.tli` file and adding the `midi` command at the top:

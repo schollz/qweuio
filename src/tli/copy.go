@@ -1,9 +1,9 @@
 package tli
 
 import (
-	"asdfgh/src/pattern"
-	"asdfgh/src/player"
-	"asdfgh/src/step"
+	"qweuio/src/pattern"
+	"qweuio/src/player"
+	"qweuio/src/step"
 )
 
 // Copy copies the contents of t2 into t1

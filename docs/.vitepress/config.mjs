@@ -9,7 +9,7 @@ const grammar = JSON.parse(
 )
 
 export default defineConfig({
-  title: 'asdfgh',
+  title: 'qweuio',
   description: 'Documentation',
   themeConfig: {
     appearance: true,

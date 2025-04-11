@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"asdfgh/src/constants"
-	"asdfgh/src/expand_multiply"
-	"asdfgh/src/pattern"
-	"asdfgh/src/player"
-	"asdfgh/src/player/midi"
+	"qweuio/src/constants"
+	"qweuio/src/expand_multiply"
+	"qweuio/src/pattern"
+	"qweuio/src/player"
+	"qweuio/src/player/midi"
 
 	log "github.com/schollz/logger"
 )

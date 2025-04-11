@@ -1,8 +1,8 @@
 package tli
 
 import (
-	"asdfgh/src/constants"
-	"asdfgh/src/player"
+	"qweuio/src/constants"
+	"qweuio/src/player"
 	"time"
 
 	log "github.com/schollz/logger"
