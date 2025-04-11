@@ -1,0 +1,22 @@
+{
+    "name": "tli",
+    "scopeName": "source.tli",
+    "patterns": [
+        {
+            "name": "keyword.control.tli",
+            "match": "\\bmidi\\b"
+        },
+        {
+            "name": "constant.numeric.tli",
+            "match": "\\b\\d+\\b"
+        },
+        {
+            "name": "support.note.tli",
+            "match": "\\b[a-gA-G](#|b)?\\d\\b"
+        },
+        {
+            "name": "comment.line.tli",
+            "match": "//.*$"
+        }
+    ]
+}

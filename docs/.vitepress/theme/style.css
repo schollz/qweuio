@@ -541,3 +541,92 @@ html.dark .VPNavBarTitle .title {
 html.dark .brutal-brand {
     color: #fff;
 }
+
+.shiny {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: variableAnimation 10s linear infinite;
+    font-size: 1.6em;
+    box-sizing: border-box;
+    display: inline;
+    margin: 0 !important;
+    margin-top: -0.5em !important;
+    margin-left: 0.5em !important;
+}
+
+html.dark .shiny {
+    background: linear-gradient(to right, #54b654 20%, #8acd8a 40%, #54b654 60%, #8acd8a 80%, #54b654 100%);
+    color: #000000;
+    background-size: 100px;
+    background-clip: text;
+}
+
+.shiny {
+    background: linear-gradient(to right, #b65454 20%, #cd8a8a 40%, #b65454 60%, #cd8a8a 80%, #b65454 100%);
+    background-size: 200px;
+    background-clip: text;
+    color: transparent;
+}
+
+.shiny+p {
+    padding-top: 0.7em;
+}
+
+@-webkit-keyframes variableAnimation {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@-moz-keyframes variableAnimation {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@-o-keyframes variableAnimation {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes variableAnimation {
+    to {
+        background-position: 200% center;
+    }
+}
+
+
+.h2under {
+    font-style: italic;
+    font-size: 1.5rem;
+
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5em;
+}
+
+.h2under {
+    border-bottom: 1px solid #000;
+}
+
+html.dark .h2under {
+    border-bottom: 1px solid #F8F0E3;
+}
+
+
+.vp-doc h1 {
+    margin: 48px 0 16px;
+    border-top: 1px solid var(--vp-c-divider);
+    padding-top: 24px;
+    letter-spacing: -0.02em;
+    line-height: 32px;
+}
+
+.vp-doc .header-anchor {
+    top: 0.75em;
+}
+
+.vp-doc h2 {
+    border-top: none;
+    margin: 16px 0 16px;
+}
