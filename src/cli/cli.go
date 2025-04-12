@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"qweuio/src/constants"
+	"qweuio/src/midiconnector"
 	"qweuio/src/tli"
 
 	"github.com/fsnotify/fsnotify"
@@ -109,6 +111,7 @@ func (cli *CLI) Stop() (err error) {
 }
 
 func (cli *CLI) Play() (err error) {
+	log.Infof("Playing TLI from file: %s", cli.Filename)
 	for _, tli := range cli.TLI {
 		if err = tli.Play(); err != nil {
 			log.Error("Error playing TLI:", err)
@@ -170,5 +173,13 @@ func (cli *CLI) watchFile() {
 			}
 			log.Error("Watcher error:", err)
 		}
+	}
+}
+
+func ListMidiDevices() {
+	devices := midiconnector.Devices()
+	fmt.Println("Available MIDI devices:")
+	for _, device := range devices {
+		fmt.Printf("- %s\n", device)
 	}
 }

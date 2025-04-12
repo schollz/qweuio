@@ -27,7 +27,11 @@ func Parse(tliString string) (tli TLI, err error) {
 	currentPatternName := ""
 	ordering := []string{}
 	orderingHas := make(map[string]bool)
-
+	type MidiParsed struct {
+		Name    string
+		Channel int
+	}
+	midiParsed := MidiParsed{Channel: 1}
 	// make sure channel is non-blocking
 	tli.stopChan = make(chan bool, 1)
 
@@ -39,18 +43,33 @@ func Parse(tliString string) (tli TLI, err error) {
 		}
 		if strings.ToLower(fields[0]) == "midi" {
 			midiName := fields[1]
-			channel := 1
-			if len(fields) > 2 {
-				channel, _ = strconv.Atoi(fields[2])
+			if midiParsed.Name != "" {
+				var p player.Player
+				p, err = midi.New(midiName, midiParsed.Channel)
+				if err != nil {
+					log.Warnf("Error creating midi player: %s", err)
+					continue
+				} else {
+					log.Debugf("connected: %+v", p)
+					tli.Players = append(tli.Players, p)
+				}
 			}
-			var p player.Player
-			p, err = midi.New(midiName, channel)
-			if err != nil {
-				log.Warnf("Error creating midi player: %s", err)
-				continue
+			midiParsed.Name = midiName
+		} else if strings.ToLower(fields[0]) == "channel" {
+			if len(fields) > 1 {
+				if midiParsed.Channel, err = strconv.Atoi(fields[1]); err != nil {
+					log.Warnf("Error parsing channel: %s", err)
+				}
 			} else {
-				log.Debugf("connected: %+v", p)
-				tli.Players = append(tli.Players, p)
+				log.Warnf("No channel value provided")
+			}
+		} else if strings.ToLower(fields[0]) == "transpose" {
+			if len(fields) > 1 {
+				if tli.Transpose, err = strconv.ParseFloat(fields[1], 64); err != nil {
+					log.Warnf("Error parsing transpose: %s", err)
+				}
+			} else {
+				log.Warnf("No transpose value provided")
 			}
 		} else if strings.ToLower(fields[0]) == "bpm" {
 			if len(fields) > 1 {
@@ -107,6 +126,17 @@ func Parse(tliString string) (tli TLI, err error) {
 	}
 	if inPattern {
 		patterns[currentPatternName] = strings.TrimSpace(currentPattern)
+	}
+	if midiParsed.Name != "" {
+		var p player.Player
+		p, err = midi.New(midiParsed.Name, midiParsed.Channel)
+		if err != nil {
+			log.Warnf("Error creating midi player: %s", err)
+			return
+		} else {
+			log.Debugf("connected: %+v", p)
+			tli.Players = append(tli.Players, p)
+		}
 	}
 
 	log.Tracef("Parsed chains: %v", chains)

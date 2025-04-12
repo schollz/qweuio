@@ -23,6 +23,7 @@ func New(name string, channel int) (p *Player, err error) {
 		p = &p0
 		err = p.Device.Open()
 		p.opened = true
+		log.Infof("opened device %+v", p.Device)
 	}
 	return
 }

@@ -3,12 +3,7 @@
 **qweuio** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
 
 
-<pre class="shiny box">
-midi op-z
-c4 d4 e4 f4
-</pre>
-
-# quickstart {#quickstart}
+## quickstart {#quickstart}
 
 First install **qweuio**:
 
@@ -28,10 +23,29 @@ Then run the program:
 qweuio first.tli 
 ```
 
-This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using the first available MIDI device. You can also specify a different MIDI device by editing the `first.tli` file and adding the `midi` command at the top:
+This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using the first available MIDI device. 
 
 
-# tli {#tli}
+You can also specify a different MIDI device. Find MIDI devices by running
+
+```bash
+$ qweuio -midi
+Available MIDI devices:
+- Midi Through:Midi Through Port-0 14:0
+- Virtual Raw MIDI 1-0:VirMIDI 1-0 20:0
+```
+
+Then you can add a MIDI device by editing the `first.tli` file and adding the `midi` command at the top with any part of the name (case insensitive). If you want to use a particular channel, you can add that too. For example, if you want to use the first virtual MIDI device, you can do this:
+
+<pre class="shiny box">
+midi virtual
+channel 1
+c4 d4 e4 f
+</pre>
+
+
+
+## tli {#tli}
 
 **tli** is the core of asdgh.
 
@@ -42,7 +56,7 @@ This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using th
 
 Lets start with some simple examples.
 
-<h2 class="h2under">Example 1 (quarter notes)</h2>
+<h3 class="h2under">Example 1 (quarter notes)</h3>
 <p class="shiny">c d e f</p>
 
 You can type this out into the norns and then press *ctrl*+*s* to parse it/save it. Then to play it just do *ctrl*+*p*. In this example there are four notes so each is given 1/4 of the time allotted to the line. If the line is given one measure, then each note will be a quarter note.
@@ -50,13 +64,13 @@ You can type this out into the norns and then press *ctrl*+*s* to parse it/save 
 Notice that the notes are supplied without octave information. In this case *zxcvbn* will try to guess the octave (using the last known octave or defaulting to octave 4).
 
 
-<h2 class="h2under">Example 2 (triplets)</h2>
+<h3 class="h2under">Example 2 (triplets)</h3>
 <p class="shiny">c4 e g c4 e g c4 e g c4 e g</p>
 
 In this example there are twelve notes so each is given 1/12 of the time allocated to the line. If the line is given one measure, then this will sound as four triplets. In this example, the octave is specified to the "C" note. The octave is simply supplied as a number after the note.
 
 
-<h2 class="h2under">Example 3 (rests)</h2>
+<h3 class="h2under">Example 3 (rests)</h3>
 
 Rests are important, as they also are an entity given time. If you want a rest between notes you put a *.*. In the example here there are quarter notes played on the first and the fourth beat.
 

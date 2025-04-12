@@ -16,9 +16,13 @@ func main() {
 	var err error
 	// Define the debug flag
 	debug := flag.Bool("debug", false, "enable debug mode")
+	showMidi := flag.Bool("midi", false, "list available midi devices")
 
-	// Custom flag parsing to capture additional args (files)
 	flag.Parse()
+	if *showMidi {
+		cli.ListMidiDevices()
+		os.Exit(0)
+	}
 
 	files := flag.Args() // Remaining arguments after flags
 
