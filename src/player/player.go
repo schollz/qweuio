@@ -21,6 +21,7 @@ const (
 	Magenta = "\033[35m"
 	Yellow  = "\033[33m"
 	Green   = "\033[32m"
+	Red     = "\033[31m"
 )
 
 type Player interface {
@@ -53,9 +54,10 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 				log.Errorf("Error playing note: %s", err)
 			}
 		}
-		fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-12s%s%s%-12s%s\n",
+		fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-6s%s%s%-12s%s%s%-12s%s\n",
 			Cyan, step.TimeStart, Reset,
 			Magenta, p, Reset,
+			Red, step.PatternName, Reset,
 			Yellow, step.Original, Reset,
 			Green, strings.Join(notesPlayed, ", "), Reset)
 
@@ -122,10 +124,11 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 		log.Tracef("noteListArpeggio: %v", noteListArpeggio)
 		durationPerNote := step.Duration / float64(len(noteListArpeggio))
 		for i, note := range noteListArpeggio {
-			// Using fixed width formatting (minimum 12 characters) instead of tabs
-			fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-12s%s%s%-12s%s\n",
+
+			fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-6s%s%s%-12s%s%s%-12s%s\n",
 				Cyan, step.TimeStart+float64(i)*durationPerNote, Reset,
 				Magenta, p, Reset,
+				Red, step.PatternName, Reset,
 				Yellow, step.Original, Reset,
 				Green, note.Add(int(ops.Transpose)).NameSharp, Reset)
 

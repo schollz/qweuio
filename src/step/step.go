@@ -18,6 +18,7 @@ type Notes struct {
 }
 
 type Step struct {
+	PatternName string        `json:"pattern_name,omitempty"`
 	Original    string        `json:"original,omitempty"`
 	Iteration   int           `json:"iteration"`
 	NoteChoices []music.Notes `json:"note_choices,omitempty"`

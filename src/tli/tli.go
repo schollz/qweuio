@@ -205,6 +205,7 @@ func Parse(tliString string) (tli TLI, err error) {
 			if pattern, ok := component.Patterns[chainElement]; ok {
 				for _, step := range pattern.Steps.Step {
 					step.TimeStart += total
+					step.PatternName = pattern.Name
 					component.ChainSteps = append(component.ChainSteps, step)
 				}
 				total += pattern.Steps.Total
