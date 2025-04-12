@@ -1,5 +1,7 @@
 # qweuio
 
+## todo 
+- [ ] when adding a new pattern when hotloading it errors
 ## spec
 
 
