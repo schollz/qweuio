@@ -1,11 +1,12 @@
 package player
 
 import (
+	"fmt"
 	"qweuio/src/music"
 	"qweuio/src/step"
-	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	log "github.com/schollz/logger"
@@ -13,6 +14,14 @@ import (
 
 const ARPEGGIO_UP = "u"
 const ARPEGGIO_DOWN = "d"
+
+const (
+	Reset   = "\033[0m"
+	Cyan    = "\033[36m"
+	Magenta = "\033[35m"
+	Yellow  = "\033[33m"
+	Green   = "\033[32m"
+)
 
 type Player interface {
 	NoteOn(note int, velocity int) error
@@ -37,11 +46,19 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 
 	noteList := step.NoteChoices[noteChoiceNum].NoteList
 	if len(step.Arpeggio) == 0 {
-		for _, note := range noteList {
+		notesPlayed := make([]string, len(noteList))
+		for i, note := range noteList {
+			notesPlayed[i] = note.Add(int(ops.Transpose)).NameSharp
 			if err := p.NoteOn(note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}
 		}
+		fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-12s%s%s%-12s%s\n",
+			Cyan, step.TimeStart, Reset,
+			Magenta, p, Reset,
+			Yellow, step.Original, Reset,
+			Green, strings.Join(notesPlayed, ", "), Reset)
+
 		go func() {
 			// Wait for the duration of the step
 			time.Sleep(time.Duration(int(step.Duration*1000000.0*ops.Gate)) * time.Microsecond)
@@ -104,7 +121,14 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 		}
 		log.Tracef("noteListArpeggio: %v", noteListArpeggio)
 		durationPerNote := step.Duration / float64(len(noteListArpeggio))
-		for _, note := range noteListArpeggio {
+		for i, note := range noteListArpeggio {
+			// Using fixed width formatting (minimum 12 characters) instead of tabs
+			fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-12s%s%s%-12s%s\n",
+				Cyan, step.TimeStart+float64(i)*durationPerNote, Reset,
+				Magenta, p, Reset,
+				Yellow, step.Original, Reset,
+				Green, note.Add(int(ops.Transpose)).NameSharp, Reset)
+
 			if err = p.NoteOn(note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}

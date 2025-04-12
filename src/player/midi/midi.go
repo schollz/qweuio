@@ -1,6 +1,7 @@
 package midi
 
 import (
+	"fmt"
 	"qweuio/src/midiconnector"
 
 	log "github.com/schollz/logger"
@@ -14,7 +15,7 @@ type Player struct {
 }
 
 func New(name string, channel int) (p *Player, err error) {
-	p0 := Player{Name: name, channel: uint8(channel)}
+	p0 := Player{Name: fmt.Sprintf("midi-%s-%d", name, channel), channel: uint8(channel)}
 	p0.Device, err = midiconnector.New(name)
 	if err != nil {
 		log.Errorf("Error opening device: %s", err)
@@ -26,6 +27,10 @@ func New(name string, channel int) (p *Player, err error) {
 		log.Infof("opened device %+v", p.Device)
 	}
 	return
+}
+
+func (m Player) String() string {
+	return m.Name
 }
 
 func (m *Player) Close() (err error) {
