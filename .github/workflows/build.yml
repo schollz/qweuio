@@ -7,6 +7,25 @@ on:
     branches: [main]
 
 jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rtmidi dependencies
+        run: |
+          brew update
+          brew install pkg-config
+          brew install rtmidi
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Set up environment variables
+        run: |
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
+      - name: Run tests
+        run: go test ./... -v -cover
+      - name: Build Go project
+        run: go build -v
   linux:
     runs-on: ubuntu-latest
 
@@ -22,6 +41,9 @@ jobs:
 
       - name: Run tests
         run: go test ./... -v -cover
+
+      - name: Build Go project
+        run: go build -v
   windows:
     runs-on: windows-latest
     steps:
@@ -48,4 +70,4 @@ jobs:
           go-version: "stable"
       - name: Build Go project
         run: |
-          go build -v -x
+          go build -v
