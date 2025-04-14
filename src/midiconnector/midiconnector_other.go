@@ -1,16 +1,17 @@
-//!go:build !windows
+//go:build !windows
+
 package midiconnector
 
 import (
-	"sync"
-
 	log "github.com/schollz/logger"
 	"gitlab.com/gomidi/midi/v2"
 	"gitlab.com/gomidi/midi/v2/drivers"
 	_ "gitlab.com/gomidi/midi/v2/drivers/rtmididrv"
 )
 
-var mutex sync.Mutex
+ar mutex sync.Mutex
+
+
 var devicesOpen map[string]drivers.Out
 
 func init() {

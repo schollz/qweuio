@@ -1,7 +1,10 @@
+//go:build windows
+
 package midiconnector
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"syscall"
 	"unsafe"
@@ -9,11 +12,30 @@ import (
 	log "github.com/schollz/logger"
 )
 
+var mutex sync.Mutex
+
 type Device struct {
 	name    string
 	num     int
 	notesOn map[uint8]bool
 }
+
+
+func filterName(name string) (foundName string, foundNum int, err error) {
+	names := Devices()
+	for i, n := range names {
+		if strings.Contains(strings.ToLower(n), strings.ToLower(name)) {
+			foundName = n
+			foundNum = i
+			break
+		}
+	}
+	if foundNum == -1 {
+		err = fmt.Errorf("could not find device with name %s", name)
+	}
+	return
+}
+
 
 func New(name string) (*Device, error) {
 	var d Device
@@ -119,7 +141,6 @@ var (
 )
 
 var devicesOpen map[string]HMIDIOUT
-var mutex sync.Mutex
 
 func init() {
 	devicesOpen = make(map[string]HMIDIOUT)
