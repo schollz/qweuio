@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +18,34 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
+          go-version: "stable"
 
       - name: Run tests
         run: go test ./... -v -cover
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+      - name: Install required packages
+        shell: msys2 {0}
+        run: |
+          pacman -S --noconfirm mingw-w64-x86_64-rtmidi mingw-w64-x86_64-toolchain
+      - name: Set up environment variables for Go
+        run: |
+          $env:Path += ";C:\\msys64\\mingw64\\bin"
+          $env:CGO_ENABLED = "1"
+          $env:CC = "x86_64-w64-mingw32-gcc"
+          $env:CGO_LDFLAGS = "-static"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Build Go project
+        run: |
+          go build -v -x
