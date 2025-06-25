@@ -4,11 +4,46 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 
 	log "github.com/schollz/logger"
 )
 
+// Memoization cache for ParseChord results
+type chordCacheKey struct {
+	chordString string
+	midiNear    int
+}
+
+var (
+	chordCache = make(map[chordCacheKey][]Note)
+	chordCacheMutex sync.RWMutex
+)
+
 func ParseChord(chordString string, midiNear int) (result []Note, err error) {
+	// Check cache first
+	cacheKey := chordCacheKey{chordString: chordString, midiNear: midiNear}
+	chordCacheMutex.RLock()
+	if cachedResult, exists := chordCache[cacheKey]; exists {
+		chordCacheMutex.RUnlock()
+		return cachedResult, nil
+	}
+	chordCacheMutex.RUnlock()
+	
+	// Compute result
+	result, err = parseChordUncached(chordString, midiNear)
+	
+	// Cache the result if successful
+	if err == nil {
+		chordCacheMutex.Lock()
+		chordCache[cacheKey] = result
+		chordCacheMutex.Unlock()
+	}
+	
+	return result, err
+}
+
+func parseChordUncached(chordString string, midiNear int) (result []Note, err error) {
 	chordStringOriginal := chordString
 	chordMatch := ""
 	_ = chordMatch
@@ -42,10 +77,11 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 	}
 	log.Tracef("transposeNote: %s", transposeNote)
 
-	// find the root note name
+	// find the root note name - optimized to avoid repeated ToLower calls
 	noteMatch := ""
 	transposeNoteMatch := ""
 	chordRest := ""
+	chordStringLower := strings.ToLower(chordString)
 	for _, n := range notesAll {
 		if transposeNote != "" && len(n) > len(transposeNoteMatch) {
 			if n == transposeNote {
@@ -53,12 +89,11 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 			}
 		}
 		if len(n) > len(noteMatch) {
-			// check if has prefix
+			// check if has prefix - original case first
 			if strings.HasPrefix(chordString, n) {
 				noteMatch = n
 				chordRest = chordString[len(n):]
-			}
-			if strings.HasPrefix(strings.ToLower(chordString), n) {
+			} else if strings.HasPrefix(chordStringLower, n) {
 				noteMatch = n
 				chordRest = chordString[len(n):]
 			}
@@ -70,61 +105,26 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 	log.Tracef("noteMatch: %s", noteMatch)
 	log.Tracef("chordRest: %s", chordRest)
 
-	// convert to canonical sharp scale
+	// convert to canonical sharp scale using lookup map - O(1) access
 	// e.g. Fb -> E, Gs -> G#
-	for i, n := range notesScaleAcc1 {
-		if noteMatch == n {
-			noteMatch = notesScaleSharp[i]
-			break
-		}
-	}
-	for i, n := range notesScaleAcc2 {
-		if noteMatch == n {
-			noteMatch = notesScaleSharp[i]
-			break
-		}
-	}
-	for i, n := range notesScaleAcc3 {
-		if noteMatch == n {
-			noteMatch = notesScaleSharp[i]
-			break
-		}
+	if canonical, exists := noteConversionMap[noteMatch]; exists {
+		noteMatch = canonical
 	}
 	if transposeNoteMatch != "" {
-		for i, n := range notesScaleAcc1 {
-			if transposeNoteMatch == n {
-				transposeNoteMatch = notesScaleSharp[i]
-				break
-			}
-		}
-		for i, n := range notesScaleAcc2 {
-			if transposeNoteMatch == n {
-				transposeNoteMatch = notesScaleSharp[i]
-				break
-			}
-		}
-		for i, n := range notesScaleAcc3 {
-			if transposeNoteMatch == n {
-				transposeNoteMatch = notesScaleSharp[i]
-				break
-			}
+		if canonical, exists := noteConversionMap[transposeNoteMatch]; exists {
+			transposeNoteMatch = canonical
 		}
 	}
 	log.Tracef("noteMatch: %s", noteMatch)
 	log.Tracef("transposeNoteMatch: %s", transposeNoteMatch)
 
-	// find longest matching chord pattern
+	// find longest matching chord pattern - use lookup map for O(1) access
 	chordMatch = "" // (no chord match is major chord)
 	chordIntervals := "1P 3M 5P"
-	for _, chordType := range dbChords {
-		for i, chordPattern := range chordType {
-			if i > 1 {
-				if len(chordPattern) > len(chordMatch) && strings.ToLower(chordRest) == strings.ToLower(chordPattern) {
-					chordMatch = chordPattern
-					chordIntervals = chordType[0]
-				}
-			}
-		}
+	chordRestLower := strings.ToLower(chordRest)
+	if intervals, exists := chordPatternMap[chordRestLower]; exists {
+		chordMatch = chordRest
+		chordIntervals = intervals
 	}
 	log.Tracef("chordMatch for %s: %s", chordRest, chordMatch)
 	log.Tracef("chordIntervals: %s", chordIntervals)
@@ -211,19 +211,19 @@ func ParseChord(chordString string, midiNear int) (result []Note, err error) {
 	log.Tracef("notesInChord: %v", notesInChord)
 
 	// go code
-	// convert to midi
+	// convert to midi - use lookup map for O(1) note access
 	midiNotesInChord := []int{}
 	lastNote := 0
+	
+	// Use lookup map for faster note finding
 	for i, n := range notesInChord {
-		for _, d := range noteDB {
-			if d.MidiValue > lastNote &&
-				(d.NameSharp == n+strconv.Itoa(octave) ||
-					d.NameSharp == n+strconv.Itoa(octave+1) ||
-					d.NameSharp == n+strconv.Itoa(octave+2) ||
-					d.NameSharp == n+strconv.Itoa(octave+3)) {
-				lastNote = d.MidiValue
-				midiNotesInChord = append(midiNotesInChord, d.MidiValue)
-				notesInChord[i] = d.NameSharp
+		// Try different octaves in order
+		for oct := octave; oct <= octave+3; oct++ {
+			targetName := n + strconv.Itoa(oct)
+			if note, exists := noteByNameMap[targetName]; exists && note.MidiValue > lastNote {
+				lastNote = note.MidiValue
+				midiNotesInChord = append(midiNotesInChord, note.MidiValue)
+				notesInChord[i] = note.NameSharp
 				break
 			}
 		}

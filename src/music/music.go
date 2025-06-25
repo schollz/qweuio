@@ -2,6 +2,13 @@ package music
 
 import "strings"
 
+// Optimization: pre-computed lookup maps
+var (
+	noteByNameMap = make(map[string]*Note)
+	chordPatternMap = make(map[string]string) // pattern -> intervals
+	noteConversionMap = make(map[string]string) // accidental -> sharp
+)
+
 var noteDB = []Note{
 	Note{MidiValue: -12, NameSharp: "C-2", Frequency: 4.0879, NamesOther: []string{"c-2"}},
 	Note{MidiValue: -11, NameSharp: "C#-2", Frequency: 4.331, NamesOther: []string{"cs-2", "db-2"}},
@@ -325,5 +332,50 @@ func init() {
 	// add name sharp into nameother
 	for i, n := range noteDB {
 		noteDB[i].NamesOther = append(noteDB[i].NamesOther, n.NameSharp)
+	}
+	
+	// Build optimization lookup maps
+	buildLookupMaps()
+}
+
+func buildLookupMaps() {
+	// Build note lookup map for faster access
+	for i := range noteDB {
+		note := &noteDB[i]
+		noteByNameMap[note.NameSharp] = note
+		for _, name := range note.NamesOther {
+			noteByNameMap[name] = note
+		}
+	}
+	
+	// Build chord pattern lookup map
+	for _, chordType := range dbChords {
+		if len(chordType) < 2 {
+			continue
+		}
+		intervals := chordType[0]
+		for i := 2; i < len(chordType); i++ {
+			pattern := strings.ToLower(chordType[i])
+			if len(pattern) > len(chordPatternMap[pattern]) {
+				chordPatternMap[pattern] = intervals
+			}
+		}
+	}
+	
+	// Build note conversion map for accidentals
+	for i, n := range notesScaleAcc1 {
+		if i < len(notesScaleSharp) {
+			noteConversionMap[n] = notesScaleSharp[i]
+		}
+	}
+	for i, n := range notesScaleAcc2 {
+		if i < len(notesScaleSharp) {
+			noteConversionMap[n] = notesScaleSharp[i]
+		}
+	}
+	for i, n := range notesScaleAcc3 {
+		if i < len(notesScaleSharp) {
+			noteConversionMap[n] = notesScaleSharp[i]
+		}
 	}
 }

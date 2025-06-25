@@ -111,7 +111,7 @@ func TestParseProfile(t *testing.T) {
 	defer pprof.StopCPUProfile()
 
 	// Run the function enough times to get meaningful data
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 50000; i++ {
 		Parse(tli1)
 	}
 }
