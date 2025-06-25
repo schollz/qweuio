@@ -115,6 +115,15 @@ func Parse(tliString string) (tli TLI, err error) {
 			} else {
 				log.Warnf("No gate value provided")
 			}
+		} else if strings.ToLower(fields[0]) == "scale" {
+			if len(fields) > 1 {
+				tli.Scale = fields[1]
+				if len(fields) > 2 {
+					tli.ScaleRoot = fields[2]
+				}
+			} else {
+				log.Warnf("No scale value provided")
+			}
 		} else if string(line[0]) == constants.SYMBOL_CHAIN {
 			chains[string(line[1])] = line[1:]
 			if inPattern {

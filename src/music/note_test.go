@@ -60,6 +60,7 @@ func TestParseNote(t *testing.T) {
 		{"c", 62, []Note{{MidiValue: 60, NameSharp: "c4"}}},
 		{"d", 32, []Note{{MidiValue: 26, NameSharp: "d1"}}},
 		{"f#3", 32, []Note{{MidiValue: 54, NameSharp: "f#3"}}},
+		{"c#", 100, []Note{{MidiValue: 97, NameSharp: "c#7"}}},
 		{"g7", 100, []Note{{MidiValue: 103, NameSharp: "g7"}}},
 		{"gb", 100, []Note{{MidiValue: 103, NameSharp: "g7"}, {MidiValue: 107, NameSharp: "b7"}}},
 		{"g♭c", 100, []Note{{MidiValue: 102, NameSharp: "f#7"}, {MidiValue: 96, NameSharp: "c7"}}},

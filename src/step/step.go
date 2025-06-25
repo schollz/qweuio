@@ -36,7 +36,7 @@ func (s Step) String() string {
 	return string(b)
 }
 
-var regexpParseModifiers = regexp.MustCompile("[" + string(constants.MODIFIERS) + "]")
+var regexpParseModifiers = regexp.MustCompile("[" + string(constants.MODIFIERS_NO_NOTE) + "]")
 
 func splitStringToInts(s string) (result []int) {
 	result = make([]int, 0)
@@ -91,6 +91,7 @@ func (s *Step) Parse(typeString string, lastMidiArg int) (lastMidi int, err erro
 						log.Errorf("Error parsing note: %s", err)
 						continue
 					}
+					log.Tracef("Parsed note: '%s' -> %+v", noteString, noteObj)
 					s.NoteChoices = append(s.NoteChoices, music.Notes{
 						Original: noteString,
 						NoteList: noteObj,

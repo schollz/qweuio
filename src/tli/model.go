@@ -25,6 +25,8 @@ type TLI struct {
 	Velocity    int     `json:"velocity,omitempty"`
 	Transpose   float64 `json:"transpose,omitempty"`
 	Gate        float64 `json:"gate,omitempty"`
+	Scale       string  `json:"scale,omitempty"`
+	ScaleRoot   string  `json:"scale_root,omitempty"`
 	// create a mutex
 	mutex sync.Mutex
 	// create a channel for stopping playback

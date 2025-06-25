@@ -64,13 +64,17 @@ func (t *TLI) Emit() (err error) {
 		for j, step := range component.ChainSteps {
 			if step.TimeStart <= cts[1] && step.TimeStart > cts[0] {
 				log.Tracef("[%2.3f] [%s] %s (%d)", step.TimeStart, component.Type, step.Original, step.Iteration)
+				log.Tracef("Step: %+v", step)
 				if component.Type == constants.MODIFIER_NOTE {
 					for _, p := range t.Players {
 						ops := player.Options{
 							Velocity:  t.Velocity,
 							Gate:      t.Gate,
 							Transpose: t.Transpose,
+							Scale:     t.Scale,
+							ScaleRoot: t.ScaleRoot,
 						}
+						log.Tracef("Player options: Scale='%s', ScaleRoot='%s'", ops.Scale, ops.ScaleRoot)
 						if err := player.Play(p, step, ops); err != nil {
 							log.Errorf("Error playing step: %s", err)
 						}

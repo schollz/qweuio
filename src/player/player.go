@@ -35,6 +35,8 @@ type Options struct {
 	Gate        float64
 	Transpose   float64
 	Probability float64
+	Scale       string
+	ScaleRoot   string
 }
 
 func Play(p Player, step step.Step, ops Options) (err error) {
@@ -49,8 +51,21 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 	if len(step.Arpeggio) == 0 {
 		notesPlayed := make([]string, len(noteList))
 		for i, note := range noteList {
-			notesPlayed[i] = note.Add(int(ops.Transpose)).NameSharp
-			if err := p.NoteOn(note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
+			finalMidiValue := note.MidiValue + int(ops.Transpose)
+
+			// Apply scale quantization if scale is specified
+			if ops.Scale != "" {
+				quantizedNote, err := music.QuantizeToScale(finalMidiValue, ops.Scale, ops.ScaleRoot)
+				if err != nil {
+					log.Warnf("Error quantizing note to scale: %s", err)
+				} else {
+					finalMidiValue = quantizedNote
+				}
+			}
+
+			resultNote := note.Add(finalMidiValue - note.MidiValue)
+			notesPlayed[i] = resultNote.NameSharp
+			if err := p.NoteOn(finalMidiValue, ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}
 		}
@@ -65,7 +80,19 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 			// Wait for the duration of the step
 			time.Sleep(time.Duration(int(step.Duration*1000000.0*ops.Gate)) * time.Microsecond)
 			for _, note := range noteList {
-				if err := p.NoteOff(note.MidiValue + int(ops.Transpose)); err != nil {
+				finalMidiValue := note.MidiValue + int(ops.Transpose)
+
+				// Apply scale quantization if scale is specified and transpose is non-zero
+				if ops.Scale != "" && ops.Transpose != 0 {
+					quantizedNote, err := music.QuantizeToScale(finalMidiValue, ops.Scale, ops.ScaleRoot)
+					if err != nil {
+						log.Warnf("Error quantizing note to scale: %s", err)
+					} else {
+						finalMidiValue = quantizedNote
+					}
+				}
+
+				if err := p.NoteOff(finalMidiValue); err != nil {
 					log.Errorf("Error stopping note: %s", err)
 				}
 			}
@@ -125,22 +152,36 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 		durationPerNote := step.Duration / float64(len(noteListArpeggio))
 		for i, note := range noteListArpeggio {
 
+			finalMidiValue := note.MidiValue + int(ops.Transpose)
+
+			// Apply scale quantization if scale is specified
+			if ops.Scale != "" {
+				quantizedNote, err := music.QuantizeToScale(finalMidiValue, ops.Scale, ops.ScaleRoot)
+				if err != nil {
+					log.Warnf("Error quantizing note to scale: %s", err)
+				} else {
+					finalMidiValue = quantizedNote
+				}
+			}
+
+			resultNote := note.Add(finalMidiValue - note.MidiValue)
+
 			fmt.Printf("%s%-8.3f%s%s%-18s%s%s%-6s%s%s%-12s%s%s%-12s%s\n",
 				Cyan, step.TimeStart+float64(i)*durationPerNote, Reset,
 				Magenta, p, Reset,
 				Red, step.PatternName, Reset,
 				Yellow, step.Original, Reset,
-				Green, note.Add(int(ops.Transpose)).NameSharp, Reset)
+				Green, resultNote.NameSharp, Reset)
 
-			if err = p.NoteOn(note.MidiValue+int(ops.Transpose), ops.Velocity); err != nil {
+			if err = p.NoteOn(finalMidiValue, ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}
-			go func(note music.Note) {
+			go func(finalMidi int) {
 				time.Sleep(time.Duration(int(durationPerNote*ops.Gate*1000000.0)) * time.Microsecond)
-				if err = p.NoteOff(note.MidiValue + int(ops.Transpose)); err != nil {
+				if err = p.NoteOff(finalMidi); err != nil {
 					log.Errorf("Error stopping note: %s", err)
 				}
-			}(note)
+			}(finalMidiValue)
 			time.Sleep(time.Duration(int(durationPerNote*1000000.0)) * time.Microsecond)
 		}
 	}

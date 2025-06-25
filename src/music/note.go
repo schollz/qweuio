@@ -118,7 +118,7 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 						if noteName != "" && (noteName == noteFullName || (noteName+octaveString) == noteFullName) {
 							if math.Abs(float64(m.MidiValue-midiNear)) < closestDistance {
 								closestDistance = math.Abs(float64(m.MidiValue - midiNear))
-								log.Tracef("found %s %d", noteFullName, m.MidiValue)
+								log.Tracef("found '%s'/'%s' %s %d", noteName, noteName+octaveString, noteFullName, m.MidiValue)
 								newNote = Note{MidiValue: m.MidiValue, NameSharp: m.NameSharp}
 							}
 						}
