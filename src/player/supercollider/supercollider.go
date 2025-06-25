@@ -2,6 +2,8 @@ package supercollider
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/hypebeast/go-osc/osc"
 	log "github.com/schollz/logger"
@@ -13,6 +15,39 @@ type Player struct {
 	opened       bool
 	oscPort      int
 	functionPath string
+}
+
+func Parse(line string) (p *Player, err error) {
+	fields := make([]string, 0)
+	for _, field := range strings.Fields(line) {
+		if field != "" {
+			fields = append(fields, field)
+		}
+	}
+
+	if len(fields) < 2 {
+		err = fmt.Errorf("invalid SuperCollider player line: %s", line)
+		return
+	}
+
+	name := fields[0]
+	oscPort := 57120
+	if len(fields) > 2 {
+		oscPort, err = strconv.Atoi(fields[2])
+		if err != nil {
+			log.Errorf("Error parsing OSC port: %s", err)
+			return
+		}
+	}
+
+	functionPath := "/note"
+	if len(fields) > 1 {
+		functionPath = fields[1]
+	}
+
+	log.Debugf("Parsed SuperCollider player: name=%s, oscPort=%d, functionPath=%s", name, oscPort, functionPath)
+	p, err = New(name, oscPort, functionPath)
+	return
 }
 
 func New(name string, oscPort int, functionPath string) (p *Player, err error) {
@@ -57,7 +92,7 @@ func (sc *Player) Close() (err error) {
 }
 
 func (sc *Player) NoteOn(note int, velocity int) (err error) {
-	log.Tracef("note_on (%d,%d)\n", note, velocity)
+	log.Tracef("[%s] note_on (%d,%d)\n", sc.functionPath, note, velocity)
 	if sc.opened {
 		msg := osc.NewMessage(sc.functionPath)
 		msg.Append("noteOn")
@@ -72,7 +107,7 @@ func (sc *Player) NoteOn(note int, velocity int) (err error) {
 }
 
 func (sc *Player) NoteOff(note int) (err error) {
-	log.Tracef("note_off (%d)", note)
+	log.Tracef("[%s] note_off (%d)", sc.functionPath, note)
 	if sc.opened {
 		msg := osc.NewMessage(sc.functionPath)
 		msg.Append("noteOff")

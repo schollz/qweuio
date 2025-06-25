@@ -10,6 +10,7 @@ import (
 	"museq/src/pattern"
 	"museq/src/player"
 	"museq/src/player/midi"
+	"museq/src/player/supercollider"
 
 	log "github.com/schollz/logger"
 )
@@ -31,7 +32,9 @@ func Parse(tliString string) (tli TLI, err error) {
 		Name    string
 		Channel int
 	}
+
 	midiParsed := MidiParsed{Channel: 1}
+
 	// make sure channel is non-blocking
 	tli.stopChan = make(chan bool, 1)
 
@@ -62,6 +65,15 @@ func Parse(tliString string) (tli TLI, err error) {
 				}
 			} else {
 				log.Warnf("No channel value provided")
+			}
+		} else if strings.ToLower(fields[0]) == "supercollider" {
+			player, playerErr := supercollider.Parse(line)
+			if playerErr != nil {
+				log.Warnf("Error parsing SuperCollider player: %s", playerErr)
+				continue
+			} else {
+				log.Debugf("connected: %+v", player)
+				tli.Players = append(tli.Players, player)
 			}
 		} else if strings.ToLower(fields[0]) == "transpose" {
 			if len(fields) > 1 {
