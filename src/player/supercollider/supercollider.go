@@ -94,8 +94,7 @@ func (sc *Player) Close() (err error) {
 func (sc *Player) NoteOn(note int, velocity int) (err error) {
 	log.Tracef("[%s] note_on (%d,%d)\n", sc.functionPath, note, velocity)
 	if sc.opened {
-		msg := osc.NewMessage(sc.functionPath)
-		msg.Append("noteOn")
+		msg := osc.NewMessage(sc.functionPath + "/noteOn")
 		msg.Append(int32(note))
 		msg.Append(int32(velocity))
 		err = sc.client.Send(msg)
@@ -109,8 +108,7 @@ func (sc *Player) NoteOn(note int, velocity int) (err error) {
 func (sc *Player) NoteOff(note int) (err error) {
 	log.Tracef("[%s] note_off (%d)", sc.functionPath, note)
 	if sc.opened {
-		msg := osc.NewMessage(sc.functionPath)
-		msg.Append("noteOff")
+		msg := osc.NewMessage(sc.functionPath + "/noteOff")
 		msg.Append(int32(note))
 		err = sc.client.Send(msg)
 		if err != nil {
