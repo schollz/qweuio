@@ -82,8 +82,8 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 			for _, note := range noteList {
 				finalMidiValue := note.MidiValue + int(ops.Transpose)
 
-				// Apply scale quantization if scale is specified and transpose is non-zero
-				if ops.Scale != "" && ops.Transpose != 0 {
+				// Apply scale quantization if scale is specified
+				if ops.Scale != "" {
 					quantizedNote, err := music.QuantizeToScale(finalMidiValue, ops.Scale, ops.ScaleRoot)
 					if err != nil {
 						log.Warnf("Error quantizing note to scale: %s", err)

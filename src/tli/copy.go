@@ -16,6 +16,8 @@ func (t1 *TLI) Copy(t2 TLI) (err error) {
 	t1.Velocity = t2.Velocity
 	t1.Probability = t2.Probability
 	t1.Transpose = t2.Transpose
+	t1.Scale = t2.Scale
+	t1.ScaleRoot = t2.ScaleRoot
 
 	t1.Components = make([]Component, len(t2.Components))
 	for i, c := range t2.Components {

@@ -38,6 +38,10 @@ func Parse(tliString string) (tli TLI, err error) {
 	// make sure channel is non-blocking
 	tli.stopChan = make(chan bool, 1)
 
+	// reset scale settings to ensure clean re-parsing
+	tli.Scale = ""
+	tli.ScaleRoot = ""
+
 	for _, line := range strings.Split(tliString, "\n") {
 		fields := strings.Fields(line)
 		line = strings.Join(fields, " ")
@@ -120,6 +124,8 @@ func Parse(tliString string) (tli TLI, err error) {
 				tli.Scale = fields[1]
 				if len(fields) > 2 {
 					tli.ScaleRoot = fields[2]
+				} else {
+					tli.ScaleRoot = "c"  // default to C if no root specified
 				}
 			} else {
 				log.Warnf("No scale value provided")
