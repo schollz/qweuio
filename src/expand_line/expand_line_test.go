@@ -10,6 +10,7 @@ func TestExpandLine(t *testing.T) {
 		{"a*3 b c", []float64{0, 1.0 / 3.0 / 3.0, 2.0 / 3.0 / 3.0, 1 / 3.0, 2.0 / 3.0}}, // "[a a a] b c"
 		{"[[a a] a] a", []float64{0, 0.125, 0.25, 0.5}},
 		{"[a a] a,a", []float64{0, 0.25, 0.5}},
+		{"a a a _", []float64{0, 0.25, 0.5, 0.75}},
 	}
 
 	for _, test := range tests {
