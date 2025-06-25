@@ -110,14 +110,40 @@ func ParseNote(midiString string, midiNear int) (notes []Note, err error) {
 			// find closes to midiNear
 			newNote := Note{MidiValue: 300, NameSharp: ""}
 			closestDistance := math.Inf(1)
+			hasExactNoteNameMatch := false
+			
 			for _, m := range noteDB {
 				for octave := -1; octave <= 8; octave++ {
 					octaveString := strconv.Itoa(octave)
 					for _, noteFullName := range m.NamesOther {
 						noteName := findMaxPrefix(n, noteFullName)
 						if noteName != "" && (noteName == noteFullName || (noteName+octaveString) == noteFullName) {
-							if math.Abs(float64(m.MidiValue-midiNear)) < closestDistance {
-								closestDistance = math.Abs(float64(m.MidiValue - midiNear))
+							distance := math.Abs(float64(m.MidiValue - midiNear))
+							isExactNoteNameMatch := n == noteName // matches the base note name (e.g., "c#" matches "c#" part of "c#4")
+							isExactFullMatch := n == noteFullName // matches the full name including octave
+							
+							// Prioritize exact matches first, then distance
+							isBetterMatch := false
+							
+							if isExactFullMatch {
+								// Exact full matches always win
+								isBetterMatch = true
+								hasExactNoteNameMatch = true
+							} else if isExactNoteNameMatch {
+								// Exact note name matches win over non-exact, or better distance for same type
+								if !hasExactNoteNameMatch || distance < closestDistance {
+									isBetterMatch = true
+									hasExactNoteNameMatch = true
+								}
+							} else if !hasExactNoteNameMatch {
+								// For non-exact matches, only if we don't have an exact note name match yet
+								if newNote.MidiValue == 300 || distance < closestDistance {
+									isBetterMatch = true
+								}
+							}
+							
+							if isBetterMatch {
+								closestDistance = distance
 								log.Tracef("found '%s'/'%s' %s %d", noteName, noteName+octaveString, noteFullName, m.MidiValue)
 								newNote = Note{MidiValue: m.MidiValue, NameSharp: m.NameSharp}
 							}

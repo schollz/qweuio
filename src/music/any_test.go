@@ -16,7 +16,7 @@ func TestParseAny(t *testing.T) {
 			{MidiValue: 76, NameSharp: "e5"},
 		}},
 		{"c6", 20, []Note{{MidiValue: 84, NameSharp: "c6"}}},
-		{"c#", 60, []Note{{MidiValue: 63, NameSharp: "cs2"}}},
+		{"c#", 60, []Note{{MidiValue: 61, NameSharp: "c#4"}}},
 	}
 	for _, test := range tests {
 		notes, err := Parse(test.midiString, test.midiNear)
