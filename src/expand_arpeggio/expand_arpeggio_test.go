@@ -1,8 +1,8 @@
 package expand_arpeggio
 
 import (
-	"qweuio/src/music"
 	"fmt"
+	"museq/src/music"
 	"testing"
 
 	log "github.com/schollz/logger"

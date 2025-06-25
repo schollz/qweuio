@@ -2,8 +2,8 @@ package player
 
 import (
 	"fmt"
-	"qweuio/src/music"
-	"qweuio/src/step"
+	"museq/src/music"
+	"museq/src/step"
 	"regexp"
 	"strconv"
 	"strings"

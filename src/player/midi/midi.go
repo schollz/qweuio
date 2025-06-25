@@ -2,7 +2,7 @@ package midi
 
 import (
 	"fmt"
-	"qweuio/src/midiconnector"
+	"museq/src/midiconnector"
 
 	log "github.com/schollz/logger"
 )

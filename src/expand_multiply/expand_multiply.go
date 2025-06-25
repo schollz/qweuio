@@ -1,8 +1,8 @@
 package expand_multiply
 
 import (
-	"qweuio/src/constants"
 	"fmt"
+	"museq/src/constants"
 	"strconv"
 	"strings"
 )

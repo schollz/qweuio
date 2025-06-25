@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"qweuio/src/constants"
-	"qweuio/src/expand_multiply"
-	"qweuio/src/pattern"
-	"qweuio/src/player"
-	"qweuio/src/player/midi"
+	"museq/src/constants"
+	"museq/src/expand_multiply"
+	"museq/src/pattern"
+	"museq/src/player"
+	"museq/src/player/midi"
 
 	log "github.com/schollz/logger"
 )

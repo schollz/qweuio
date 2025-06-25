@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"qweuio/src/constants"
-	"qweuio/src/midiconnector"
-	"qweuio/src/tli"
+	"museq/src/constants"
+	"museq/src/midiconnector"
+	"museq/src/tli"
 
 	"github.com/fsnotify/fsnotify"
 	log "github.com/schollz/logger"

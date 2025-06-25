@@ -1,4 +1,4 @@
-# qweuio
+# museq
 
 ## todo 
 - [ ] when adding a new pattern when hotloading it errors

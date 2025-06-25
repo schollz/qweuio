@@ -1,7 +1,7 @@
 package step
 
 import (
-	"qweuio/src/constants"
+	"museq/src/constants"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

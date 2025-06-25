@@ -1,8 +1,8 @@
 package tli
 
 import (
-	"qweuio/src/constants"
-	"qweuio/src/player"
+	"museq/src/constants"
+	"museq/src/player"
 	"time"
 
 	log "github.com/schollz/logger"

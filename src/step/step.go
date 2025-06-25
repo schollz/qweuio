@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"qweuio/src/constants"
-	"qweuio/src/music"
+	"museq/src/constants"
+	"museq/src/music"
 
 	log "github.com/schollz/logger"
 )

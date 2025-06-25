@@ -1,8 +1,8 @@
 package expand_line
 
 import (
-	"qweuio/src/expand_multiply"
-	"qweuio/src/step"
+	"museq/src/expand_multiply"
+	"museq/src/step"
 	"strings"
 	"unicode"
 

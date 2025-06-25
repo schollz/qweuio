@@ -1,4 +1,4 @@
-module qweuio
+module museq
 
 go 1.24
 

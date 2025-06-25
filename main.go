@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"qweuio/src/cli"
+	"museq/src/cli"
 
 	log "github.com/schollz/logger"
 )

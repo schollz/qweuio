@@ -1,14 +1,14 @@
-# qweuio 
+# museq 
 
-**qweuio** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
+**museq** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
 
 
 ## quickstart {#quickstart}
 
-First install **qweuio**:
+First install **museq**:
 
 ```bash
-curl https://qweuio.schollz.com/install.sh | bash
+curl https://museq.schollz.com/install.sh | bash
 ```
 
 Now create a simple file called `first.tli`:
@@ -20,7 +20,7 @@ echo "c4 d4 e4 f4" > first.tli
 Then run the program:
 
 ```
-qweuio first.tli 
+museq first.tli 
 ```
 
 This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using the first available MIDI device. 
@@ -29,7 +29,7 @@ This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using th
 You can also specify a different MIDI device. Find MIDI devices by running
 
 ```bash
-$ qweuio -midi
+$ museq -midi
 Available MIDI devices:
 - Midi Through:Midi Through Port-0 14:0
 - Virtual Raw MIDI 1-0:VirMIDI 1-0 20:0
@@ -47,7 +47,7 @@ c4 d4 e4 f
 
 ## tli {#tli}
 
-**tli** is the core of asdgh.
+**tli** is the core of museq.
 
 **tli** means "text-limited interface". It is the syntax used to enter commands, or add collections of commands (called a "pattern"), or collections of patterns (called a "chain"). The commands are often notes, but they can also be modifiers that augment the way that a note is played.
 

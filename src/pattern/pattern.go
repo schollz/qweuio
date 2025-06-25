@@ -1,8 +1,8 @@
 package pattern
 
 import (
-	"qweuio/src/expand_line"
-	"qweuio/src/step"
+	"museq/src/expand_line"
+	"museq/src/step"
 	"strings"
 
 	log "github.com/schollz/logger"

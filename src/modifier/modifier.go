@@ -1,7 +1,7 @@
 package modifier
 
 import (
-	"qweuio/src/constants"
+	"museq/src/constants"
 	"regexp"
 	"strings"
 )

@@ -1,9 +1,9 @@
 package tli
 
 import (
-	"qweuio/src/pattern"
-	"qweuio/src/player"
-	"qweuio/src/step"
+	"museq/src/pattern"
+	"museq/src/player"
+	"museq/src/step"
 	"sync"
 	"time"
 )

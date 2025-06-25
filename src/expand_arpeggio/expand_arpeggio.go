@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"qweuio/src/music"
+	"museq/src/music"
 
 	log "github.com/schollz/logger"
 )
