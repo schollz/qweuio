@@ -180,6 +180,7 @@ func (s *Steps) CalculateEnd() {
 
 	// Calculate end/durations
 	for i := 0; i < len(s.Step); i++ {
+		durationSet := false
 		for j_ := 1; j_ < len(s.Step); j_++ {
 			j := (j_ + i) % len(s.Step)
 			if string(s.Step[j].Original[0]) == constants.HOLD {
@@ -191,7 +192,12 @@ func (s *Steps) CalculateEnd() {
 				endTime += s.Total
 			}
 			s.Step[i].Duration = endTime - startTime
+			durationSet = true
 			break
+		}
+		// If no non-hold step found, duration extends to end of pattern
+		if !durationSet {
+			s.Step[i].Duration = s.Total - s.Step[i].TimeStart
 		}
 	}
 }
