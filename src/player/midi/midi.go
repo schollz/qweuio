@@ -8,14 +8,16 @@ import (
 )
 
 type Player struct {
-	Name    string
-	Device  *midiconnector.Device
-	opened  bool
-	channel uint8
+	Name         string
+	nameOriginal string // original name, used for debugging
+	Device       *midiconnector.Device
+	opened       bool
+	channel      uint8
 }
 
 func New(name string, channel int) (p *Player, err error) {
-	p0 := Player{Name: fmt.Sprintf("midi-%s-%d", name, channel), channel: uint8(channel)}
+
+	p0 := Player{Name: fmt.Sprintf("midi-%s-%d", name, channel), channel: uint8(channel), nameOriginal: name}
 	p0.Device, err = midiconnector.New(name)
 	if err != nil {
 		log.Errorf("Error opening device: %s", err)
@@ -61,7 +63,7 @@ func (m *Player) NoteOff(note int) (err error) {
 	} else {
 		// Player was closed, but we still need to send note_off to avoid stuck notes
 		// Create a temporary device to send the note_off message
-		tempDevice, tempErr := midiconnector.New(m.Device.Name())
+		tempDevice, tempErr := midiconnector.New(m.nameOriginal)
 		if tempErr == nil {
 			if openErr := tempDevice.Open(); openErr == nil {
 				err = tempDevice.NoteOff(m.channel, uint8(note))
