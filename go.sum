@@ -12,8 +12,12 @@ github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOf
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 gitlab.com/gomidi/midi/v2 v2.2.19 h1:/Ktpf21SIOX61gg8PJ7wYLSsD+dOU1e3z3tlO9OS+Zs=
 gitlab.com/gomidi/midi/v2 v2.2.19/go.mod h1:ENtYaJPOwb2N+y7ihv/L7R4GtWjbknouhIIkMrJ5C0g=
+gitlab.com/gomidi/midi/v2 v2.3.14 h1:BbTDExFlg0zm90AtyGDdO87jdKjn+eYqeSlSGGpFPzQ=
+gitlab.com/gomidi/midi/v2 v2.3.14/go.mod h1:jDpP4O4skYi+7iVwt6Zyp18bd2M4hkjtMuw2cmgKgfw=
 golang.org/x/sys v0.13.0 h1:Af8nKPmuFypiUBjVoU9V20FiaFXOcuZI21p0ycVYYGE=
 golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.33.0 h1:q3i8TbbEz+JRD9ywIRlyRAQbM0qF7hu24q3teo2hbuw=
+golang.org/x/sys v0.33.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
