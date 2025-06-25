@@ -69,7 +69,7 @@ func (t *TLI) Emit() (err error) {
 						ops := player.Options{
 							Velocity:  t.Velocity,
 							Gate:      t.Gate,
-							Transpose: 0,
+							Transpose: t.Transpose,
 						}
 						if err := player.Play(p, step, ops); err != nil {
 							log.Errorf("Error playing step: %s", err)
