@@ -42,7 +42,7 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 		return nil
 	}
 	// Implement the logic for playing a step
-	log.Tracef("Playing step: %v", step)
+	log.Tracef("Playing step: %v with ops %v", step, ops)
 	noteChoiceNum := step.Iteration % len(step.NoteChoices)
 
 	noteList := step.NoteChoices[noteChoiceNum].NoteList
