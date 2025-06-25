@@ -114,6 +114,18 @@ func (sc *Player) NoteOff(note int) (err error) {
 		if err != nil {
 			log.Errorf("Error sending OSC note_off message: %s", err)
 		}
+	} else {
+		// Player was closed, but we still need to send note_off to avoid stuck notes
+		// Create a temporary client to send the note_off message
+		tempClient := osc.NewClient("localhost", sc.oscPort)
+		if tempClient != nil {
+			msg := osc.NewMessage(sc.functionPath + "/noteOff")
+			msg.Append(int32(note))
+			err = tempClient.Send(msg)
+			if err != nil {
+				log.Errorf("Error sending OSC note_off message via temp client: %s", err)
+			}
+		}
 	}
 	return
 }

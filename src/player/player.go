@@ -76,15 +76,15 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 			Yellow, step.Original, Reset,
 			Green, strings.Join(notesPlayed, ", "), Reset)
 
-		go func() {
+		go func(player Player, notes []music.Note, transpose float64, scale string, scaleRoot string) {
 			// Wait for the duration of the step
 			time.Sleep(time.Duration(int(step.Duration*1000000.0*ops.Gate)) * time.Microsecond)
-			for _, note := range noteList {
-				finalMidiValue := note.MidiValue + int(ops.Transpose)
+			for _, note := range notes {
+				finalMidiValue := note.MidiValue + int(transpose)
 
 				// Apply scale quantization if scale is specified
-				if ops.Scale != "" {
-					quantizedNote, err := music.QuantizeToScale(finalMidiValue, ops.Scale, ops.ScaleRoot)
+				if scale != "" {
+					quantizedNote, err := music.QuantizeToScale(finalMidiValue, scale, scaleRoot)
 					if err != nil {
 						log.Warnf("Error quantizing note to scale: %s", err)
 					} else {
@@ -92,12 +92,12 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 					}
 				}
 
-				if err := p.NoteOff(finalMidiValue); err != nil {
+				if err := player.NoteOff(finalMidiValue); err != nil {
 					log.Errorf("Error stopping note: %s", err)
 				}
 			}
 			log.Tracef("Finished playing step: %v", step)
-		}()
+		}(p, noteList, ops.Transpose, ops.Scale, ops.ScaleRoot)
 	} else {
 		// select an arpeggio
 		arpeggioString := step.Arpeggio[step.Iteration%len(step.Arpeggio)]
@@ -176,12 +176,12 @@ func Play(p Player, step step.Step, ops Options) (err error) {
 			if err = p.NoteOn(finalMidiValue, ops.Velocity); err != nil {
 				log.Errorf("Error playing note: %s", err)
 			}
-			go func(finalMidi int) {
+			go func(player Player, finalMidi int) {
 				time.Sleep(time.Duration(int(durationPerNote*ops.Gate*1000000.0)) * time.Microsecond)
-				if err = p.NoteOff(finalMidi); err != nil {
+				if err = player.NoteOff(finalMidi); err != nil {
 					log.Errorf("Error stopping note: %s", err)
 				}
-			}(finalMidiValue)
+			}(p, finalMidiValue)
 			time.Sleep(time.Duration(int(durationPerNote*1000000.0)) * time.Microsecond)
 		}
 	}

@@ -58,6 +58,19 @@ func (m *Player) NoteOff(note int) (err error) {
 	log.Tracef("note_off (%d,%d)", m.channel, note)
 	if m.opened {
 		err = m.Device.NoteOff(m.channel, uint8(note))
+	} else {
+		// Player was closed, but we still need to send note_off to avoid stuck notes
+		// Create a temporary device to send the note_off message
+		tempDevice, tempErr := midiconnector.New(m.Device.Name())
+		if tempErr == nil {
+			if openErr := tempDevice.Open(); openErr == nil {
+				err = tempDevice.NoteOff(m.channel, uint8(note))
+				tempDevice.Close() // Clean up temporary device
+			}
+		}
+		if tempErr != nil || err != nil {
+			log.Warnf("Could not send note_off via temp device: %v", err)
+		}
 	}
 	return
 }

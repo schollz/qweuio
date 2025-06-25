@@ -38,9 +38,16 @@ func (t1 *TLI) Copy(t2 TLI) (err error) {
 		}
 	}
 
-	t1.Players = make([]player.Player, len(t2.Players))
-	for i, p := range t2.Players {
-		t1.Players[i] = p
+	// Only update players if they've actually changed to avoid breaking ongoing note-off goroutines
+	if len(t1.Players) == len(t2.Players) {
+		// Same number of players, keep existing ones to avoid stuck notes
+		// Players should be identical since they're created from the same config
+	} else {
+		// Different number of players, need to replace
+		t1.Players = make([]player.Player, len(t2.Players))
+		for i, p := range t2.Players {
+			t1.Players[i] = p
+		}
 	}
 
 	return
