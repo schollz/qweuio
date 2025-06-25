@@ -28,3 +28,5 @@ go.work.sum
 # env file
 .env
 src/tli/out.json
+*.tli
+docs/.vitepress/cache/***
