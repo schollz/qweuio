@@ -19,3 +19,6 @@ clean:
 	rm -f alsa-lib-1.2.8.tar.bz2
 
 .PHONY: build clean
+serve:
+	cd docs && npm install
+	cd docs && npx vitepress dev
