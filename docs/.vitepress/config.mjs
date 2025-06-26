@@ -16,8 +16,9 @@ export default defineConfig({
     sidebar: false,
     nav: [
       { text: 'tli', link: '#tli' },
-      { text: 'Features', link: '#features' },
-      { text: 'Contact', link: '#contact' }
+      { text: 'features', link: '#features' },
+      { text: 'quickstart', link: '#quickstart' },
+      { text: 'syntax', link: '#syntax' },
     ]
   },
   markdown: {

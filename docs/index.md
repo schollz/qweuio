@@ -30,11 +30,21 @@ museq -midi
 
 When you call a midi device, use any part of the name (case insensitive). 
 
+### playing
+
+Now just create a tli-file (see [syntax](#syntax)), you would save it to a file called `example.tli` and then run:
+
+```bash
+museq example.tli
+```
+
 ## syntax
 
 The syntax for **museq** is called **tli** (text-limited interface). '
 
 Let's start with a full-fledged example of a **museq** file, and go through it piece by piece which will help understand 90% of what **museq** can do. 
+
+`example.tli`:
 
 ```bash
 // first example 
@@ -60,13 +70,6 @@ g _
 
 ```
 
-### playing
-
-To play the above example, you would save it to a file called `example.tli` and then run:
-
-```bash
-museq example.tli
-```
 
 ### comments
 
@@ -79,7 +82,7 @@ are prefixed with `//` and can be placed anywhere in the file. They are ignored 
 
 ### players
 
-There are two players: `midi` and `supercollider`. You can specify which player to use by using the `midi` or `supercollider` keyword followed by the name of the device. For example, on line 2:
+There are two players: `midi` and `supercollider`. You can specify which player to use by using the `midi` or `supercollider` keyword followed by the name of the device and channel (optional). For example, on line 2:
 
 ```bash
 midi thingy 1

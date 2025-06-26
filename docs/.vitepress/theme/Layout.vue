@@ -21,7 +21,8 @@ const closeMenu = () => {
 
         <template #layout-bottom>
             <footer class="text-center mt-2 mb-2">
-                <p>Built with Brutalism & VitePress</p>
+                <p>by <a href="https://github.com/schollz">Zack Scholl</a> aka <a
+                        href="https://infinitedigits.co">infinite digits</a> 2025</p>
             </footer>
         </template>
     </DefaultLayout>

@@ -1,0 +1,86 @@
+name: Release
+
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rtmidi dependencies
+        run: |
+          brew update
+          brew install pkg-config
+          brew install rtmidi
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Set up environment variables
+        run: |
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
+      - name: Run tests
+        run: go test ./... -v -cover
+      - name: Build Go project
+        run: go build -v -o museq_${{ github.event.release.name }}_macos
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            museq_${{ github.event.release.name }}_macos
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ALSA development libraries
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Run tests
+        run: go test ./... -v -cover
+      - name: Build Go project
+        run: go build -v -o museq_${{ github.event.release.name }}_amd64
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            museq_${{ github.event.release.name }}_amd64
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+      - name: Install required packages
+        shell: msys2 {0}
+        run: |
+          pacman -S --noconfirm mingw-w64-x86_64-rtmidi mingw-w64-x86_64-toolchain
+      - name: Set up environment variables for Go
+        run: |
+          $env:Path += ";C:\\msys64\\mingw64\\bin"
+          $env:CGO_ENABLED = "1"
+          $env:CC = "x86_64-w64-mingw32-gcc"
+          $env:CGO_LDFLAGS = "-static"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Build Go project
+        run: |
+          go build -v -o museq_${{ github.event.release.name }}_windows.exe
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            museq_${{ github.event.release.name }}_windows.exe
