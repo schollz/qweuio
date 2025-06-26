@@ -45,17 +45,19 @@ bpm 180
 transpose -12
 gate 0.2
 
-+# part1*3 [part2 part3] * 2
-
 # part1 
 a3 b c d
 
 # part2
-Cmaj/G;3@u4d8
+Cmaj/G;3@u4d8,u2,d2
 
 # part3
 g _
-[g ~] d4
+[g ~] d4,e5
+
+// pattern chaining
++# part1*3 [part2 part3] * 2
+
 ```
 
 ### comments
@@ -67,7 +69,7 @@ Comments like on line 1:
 
 are prefixed with `//` and can be placed anywhere in the file. They are ignored by **museq**.
 
-### specify player
+### players
 
 There are two players: `midi` and `supercollider`. You can specify which player to use by using the `midi` or `supercollider` keyword followed by the name of the device. For example, on line 2:
 
@@ -142,3 +144,75 @@ gate 0.2
 - `bpm` specifies the beats per minute (default is 120).
 - `transpose` specifies the number of semitones to transpose the notes (default is 0).
 - `gate` specifies the duration of the notes in beats (default is 0.5).
+
+## basic note patterns
+
+Note patterns are specified by first specifying the pattern name, prefixed with `#`, followed by the notes. For example, on line 7:
+
+```bash
+# part1
+a3 b c d
+```
+
+This specifies a pattern called `part1` that contains the notes `a3`, `b`, `c`, and `d`. The notes can be specified in any order, and can include octaves (e.g., `a3` is an A note in the 3rd octave). If it does not include an octave, it will default to the closest octave from the previous note. 
+
+Each line is one measure, and each entity gets an equal proportion of the measure. For example, in the above example, each note gets 1/4 of the measure (i.e., a quarter note).
+
+### chords and arpeggios
+
+You can specify chords and arpeggios using a simple syntax. For example, on line 10:
+
+```bash
+# part2
+Cmaj/G;3@u4d8,u2,d2
+```
+
+This specifies a chord `Cmaj` which is a C major chord. It is optionally transposed by including `/G` which means that the bass note is G. The `;3` optionally specifies the octave. Finally, the `@u4d8` specifies that the chord should be played as an arpeggio. If you do not have the arpeggio syntax, it will be played as a chord, polyphonically.
+
+The arpeggio syntax has several options:
+
+- `u` specifies the upward direction (default).
+- `d` specifies the downward direction.
+- The number specifies the number of steps to include.
+
+Also notice that there is a comma `,` which separates different arpeggio patterns. When using a `,` to separate different patterns (arpeggios or chords or notes) it will move through which one to play in a round-robin fashion. For example, the first playthrough will play the first pattern, the second playthrough will play the second pattern, and so on.
+
+### legato, rests, and subdivisions
+
+In the third pattern we have examples of legato, rests, and subdivisions:
+
+```bash
+# part3
+g _
+[g ~] d4,e5
+```
+
+The `# part3` specifies a pattern called `part3`. 
+
+The first line `g _` specifies that the note `g` should be played legato (i.e., held) until the next note. The underscore `_` indicates that the note should be held until the next note is played.
+
+The second line has `g ~` which specifies that the note `g` is followed by a rest. It is enclosed in `[]` which indicates that it is a single entity. The last part, `d4,e5`, specifies the two notes `d4` and `e5` - where the first, `d4` is played the first time through and the second, `e5` is played the second time through. 
+
+Both `[g ~]` and `d4,e5` are considered single entities, so each is proportioned 1/2 of the measure. The `[g ~]` is then further subdivided in time - the `g` gets 1/2 of its subdivision and the `~` gets the other half. So in the end, `g` gets 1/4 of the measure, and `d4`/`e5` each get 1/2 of the measure. This is a powerful way to create complex rhythms and patterns. However, it could also be written as:
+
+```bash
+g ~ d4,e5 _
+```
+
+I.e. The `g` is played for 1/4 measure, then rested, and then the `d4` or `e5` are played for the rest of the measure.
+
+## pattern chaining
+
+When you have multiple patterns, you can chain them together using the `+` operator. For example, on line 16:
+
+```bash
++# part1*3 [part2 part3] * 2
+```
+
+This specifies that the `part1` pattern should be played 3 times, followed by the `part2` and `part3` patterns played after each other twice. The `*` operator specifies that the pattern should be repeated a certain number of times and the `[]` indicates that the patterns inside should be played considered a single entity (useful when you want to play multiple patterns together). This could be written in an expanded form as:
+
+```bash	
++# part1 part1 part1 part2 part3 part2 part3
+```
+
+which is equivalent to the above.
