@@ -1,9 +1,20 @@
 # museq 
 
-**museq** is a simple, text-based interface for creating and playing music. It is designed to be easy to use and understand, even for those with no prior experience in music theory or programming.
+**museq** is a music sequencer. It works like a [tracker](https://en.wikipedia.org/wiki/Music_tracker), but the main difference is that it 
+designed to be use with any text editor. 
 
+## features
 
-## quickstart {#quickstart}
+- **Text-based**: You can write music in any text editor, and it will work on any platform.
+- **MIDI support**: It can play music using MIDI devices, so you can use it with any MIDI instrument or software.
+- **SuperCollider support**: It can also play music using SuperCollider, so you can use it with any SuperCollider synth.
+- **Patterns**: You can create patterns of music that can be reused and combined.
+- **Chains**: You can create chains of patterns that can be run independently.
+- **Arpeggios**: You can create arpeggios using a simple syntax.
+- **Chords**: You can create chords using a simple syntax.
+- **Asynchronous velocity/transpose**: You can change the velocity and transpose notes asynchronously.
+
+## quickstart
 
 First install **museq**:
 
@@ -11,185 +22,123 @@ First install **museq**:
 curl https://museq.schollz.com/install.sh | bash
 ```
 
-Now create a simple file called `first.tli`:
+Now you can identify the name of midi devices:
+
+```
+museq -midi
+```
+
+When you call a midi device, use any part of the name (case insensitive). 
+
+## syntax
+
+The syntax for **museq** is called **tli** (text-limited interface). '
+
+Let's start with a full-fledged example of a **museq** file, and go through it piece by piece which will help understand 90% of what **museq** can do.
 
 ```bash
-echo "c4 d4 e4 f4" > first.tli
+// first example 
+
+midi thingy 1
+// supercollider /synth1
+bpm 180
+transpose -12
+gate 0.2
+
++# part1*3 [part2 part3] * 2
+
+# part1 
+a3 b c d
+
+# part2
+Cmaj/G;3@u4d8
+
+# part3
+g _
+[g ~] d4
 ```
 
-Then run the program:
+### comments
 
+Comments like on line 1:
 ```
-museq first.tli 
+// first example 
 ```
 
-This program will play the notes `c4`, `d4`, `e4`, and `f4` in sequence using the first available MIDI device. 
+are prefixed with `//` and can be placed anywhere in the file. They are ignored by **museq**.
 
+### specify player
 
-You can also specify a different MIDI device. Find MIDI devices by running
+There are two players: `midi` and `supercollider`. You can specify which player to use by using the `midi` or `supercollider` keyword followed by the name of the device. For example, on line 2:
 
 ```bash
-$ museq -midi
-Available MIDI devices:
-- Midi Through:Midi Through Port-0 14:0
-- Virtual Raw MIDI 1-0:VirMIDI 1-0 20:0
+midi thingy 1
 ```
 
-Then you can add a MIDI device by editing the `first.tli` file and adding the `midi` command at the top with any part of the name (case insensitive). If you want to use a particular channel, you can add that too. For example, if you want to use the first virtual MIDI device, you can do this:
-
-<pre class="shiny box">
-midi virtual
-channel 1
-c4 d4 e4 f
-</pre>
-
-
-
-## tli {#tli}
-
-**tli** is the core of museq.
-
-**tli** means "text-limited interface". It is the syntax used to enter commands, or add collections of commands (called a "pattern"), or collections of patterns (called a "chain"). The commands are often notes, but they can also be modifiers that augment the way that a note is played.
-
-**tli** also means "too little information". It is a style of syntax developed for producing oblique rhythms without music theory. **tli** at its core is a single line of letters or numbers separated by spaces. The tracker allocates time to each line, and subdivides the time equally among each entity on the line.
-
-
-Lets start with some simple examples.
-
-<h3 class="h2under">Example 1 (quarter notes)</h3>
-<p class="shiny">c d e f</p>
-
-You can type this out into the norns and then press *ctrl*+*s* to parse it/save it. Then to play it just do *ctrl*+*p*. In this example there are four notes so each is given 1/4 of the time allotted to the line. If the line is given one measure, then each note will be a quarter note.
-
-Notice that the notes are supplied without octave information. In this case museq will try to guess the octave (using the last known octave or defaulting to octave 4).
-
-
-<h3 class="h2under">Example 2 (triplets)</h3>
-<p class="shiny">c4 e g c4 e g c4 e g c4 e g</p>
-
-In this example there are twelve notes so each is given 1/12 of the time allocated to the line. If the line is given one measure, then this will sound as four triplets. In this example, the octave is specified to the "C" note. The octave is simply supplied as a number after the note.
-
-
-<h3 class="h2under">Example 3 (rests)</h3>
-
-Rests are important, as they also are an entity given time. If you want a rest between notes you put a *~*. In the example here there are quarter notes played on the first and the fourth beat.
-
-<p class="shiny">c4 ~ ~ g4</p>
-
-
-If instead you want the two notes to be eighth notes, you have to add in more rests to make the line have eight entities.
-
-<p class="shiny">c4 ~ ~ ~ ~ ~ ~ ~ ~ g4</p>
-
-Now the two notes play on the first and last eighth note of the series.
-
-
-
-<h2 class="h2under">Example 4 (ties)</h2>
-
-Ties are equally important as rests. If you use a tie, you can length the preceding note. So in Example 3, if we want a half note, followed by a rest and then a quarter-note you can use a tie signified by *_*. For example:
-
-<p class="shiny">c4 _ ~ g4</p>
-
-Ties are special too, because they can continue onto the next line. If you want to play out a note for two measures, then you can simply use two lines to express it:
-
-
-<pre class="shiny">c4
-_
-</pre>
-
-
-
-<h2 class="h2under" id="subdivisions">Example 5 (subdivisions)</h2>
-
-Parentheses can be used to define subdivisions which can save space instead of entering many rests. Each enclosed set of parentheses is considered a single entity for the purposes of dividing by the number of entities per line. For example, consider the following:
-
-<p class="shiny">[c d] e</p>
-
-In this example, there are three notes, but two of the notes (`c` and `d`) are enclosed in a parentheses so they are considered a single entity. This means there are only two entities on that line (`[c d]` and `e`), and each is given half of the pulses (48 pulses). The parenthetical entity is then compiled with the remaining pulses, so that the remaining pulses are redivided, so the 48 pulses is split into 24 pulses for both the `c` and `d` notes.
-
-The above incantation can be written using a tie:
-
-<p class="shiny">c d e _</p>
-
-In this case it might be simpler to use ties. But as you add more subdivisions, things become more complicated. For example:
-
-
-<p class="shiny">[[c d e f] g] a</p>
-
-This is the same as:
-
-<p class="shiny">c d e f  g _ _ _ a _ _ _ _ _ _ </p>
-
-The latter requires a lot more ties to get the same invocation.
-
-
-## Arpeggios
-
-Arpeggios are created using the `@` symbol followed by arpeggio patterns. For example:
-
-<p class="shiny">Cmaj@u4d2</p>
-
-This creates a C major chord arpeggio that goes up 4 notes then down 2 notes. The arpeggio pattern `u4d2` means "up 4, down 2".
-
-You can pattern arpeggios themselves, so this will switch between "up 4, down 2" and "up 2, down 4":
-
-<p class="shiny">Cmaj@u4d2,u2d4</p>
-
-## Chaining
-
-You can chain patterns together using the `+` symbol. This allows you to create sequences of patterns:
-
-<pre class="shiny">
-+# [first_part second_part] * 2 second_part
-
-# first_part
-Cmaj@u2d4,u3d3
-
-# second_part
-d,d5 e
-f g a
-</pre>
-
-The `+#` indicates the start of a pattern chain, and `# pattern_name` defines individual patterns.
-
-### Chains
-
-Museq supports several types of chains which can all be run independntly.
-
-- **Notes (`#`)**: Controls the notes
-- **Velocity (`!`)**: Controls note volume
-- **Transpose (`$`)**: Shifts notes by semitones
-- **Gate (`%`)**: Controls note duration
-
-Example with velocity modifier:
-
-<pre class="shiny">
-+! velocity_thing
-
-! velocity_thing
-30 30 90
-</pre>
-
-### Chord Notation
-
-There are two ways to write chords - you can use the canonical music theory:
-
-<p class="shiny">Cmaj;3</p>
-
-which will play a C major chord on octave 3. You can also define transpoitions with `/`:
-
-<p class="shiny">Cmaj/G;3</p>
-
-Chords can also be specified at the note level, for example the chord above would be written as
-
-<p class="shiny">g3c4e4</p>
-
-### Note Naming
-
-Notes can be specified with:
-- Letter names: `c`, `d`, `e`, `f`, `g`, `a`, `b`
-- Octave numbers: `c4`, `d5`, `g3`
-- Sharps and flats: `f#3`, `g♭c`
-- Multiple notes: `c4eg` (C, E, G in octave 4)
-
+This specifies that the `thingy` MIDI device should be used, and the `1` specifies the MIDI channel (1-16). If you want to use SuperCollider, you would write
+
+```bash
+supercollider /synth1
+```
+
+This specifies that the SuperCollider path `/synth1` should be used. Here's an examle SuperCollider synth definition:
+```supercollider
+(
+s.waitForBoot({
+	SynthDef(\simpleSynth, {
+		arg freq = 440, amp = 0.5, gate = 1;
+		var env, osc, out;
+		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.8), gate, doneAction: 2);
+		osc = Mix.new(Saw.ar(freq * [1, 1.008, 0.993], amp / 3));
+		osc = MoogFF.ar(osc,MouseX.kr(100,10000,1));
+		out = osc * env;
+		out = Pan2.ar(out,Rand(-0.1,0.1));
+		Out.ar(0, out);
+	}).add;
+	~activeNotes = Dictionary.new;
+	OSCdef(\noteOn, {
+		arg msg, time, addr, recvPort;
+		var note, velocity, freq, amp, synth;
+		note = msg[1];
+		velocity = msg[2];
+		freq = note.midicps;
+		amp = velocity / 127.0;
+		synth = Synth(\simpleSynth, [\freq, freq, \amp, amp]);
+		~activeNotes[note] = synth;
+		("Note ON: " ++ note ++ " (freq: " ++ freq.round(0.1) ++ " Hz, vel: " ++ velocity ++ ")").postln;
+	}, '/synth1/noteOn');
+	OSCdef(\noteOff, {
+		arg msg, time, addr, recvPort;
+		var note, synth;
+		note = msg[1];
+		synth = ~activeNotes[note];
+		if(synth.notNil, {
+			synth.set(\gate, 0);
+			~activeNotes.removeAt(note);
+			("Note OFF: " ++ note).postln;
+		}, {
+			("Warning: Note OFF received for inactive note: " ++ note).postln;
+		});
+	}, '/synth1/noteOff');
+	"OSC Synth setup complete!".postln;
+	"Listening for:".postln;
+	"  /synth1/noteOn [note, velocity]".postln;
+	"  /synth1/noteOff [note]".postln;
+	"Default OSC port: 57120".postln;
+});
+)
+```
+
+### globals
+
+You can specify global settings that apply to the whole section. Global settings are specified with the `bpm`, `transpose`, and `gate` keywords. For example, on lines 3-5:
+
+```bash
+bpm 180
+transpose -12
+gate 0.2
+```
+
+- `bpm` specifies the beats per minute (default is 120).
+- `transpose` specifies the number of semitones to transpose the notes (default is 0).
+- `gate` specifies the duration of the notes in beats (default is 0.5).

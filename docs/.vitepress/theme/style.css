@@ -626,3 +626,16 @@ html.dark .h2under {
     border-top: none;
     margin: 16px 0 16px;
 }
+
+.vp-doc h3 .header-anchor {
+    top: 0em;
+}
+
+/* Hide line numbers for single-line code blocks */
+.vp-code-group .line-numbers-wrapper:has(+ .shiki:not(:has(.line:nth-child(2)))) {
+    display: none !important;
+}
+
+.vp-code-group .shiki:not(:has(.line:nth-child(2))) {
+    padding-left: 24px !important;
+}

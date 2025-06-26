@@ -21,30 +21,6 @@ export default defineConfig({
     ]
   },
   markdown: {
-    code: {
-      highlight: async (code, lang) => {
-        const { getHighlighter } = await import('shiki')
-
-        const highlighter = await getHighlighter({
-          themes: ['github-dark'],
-          langs: [
-            // Register TLI
-            {
-              id: 'tli',
-              scopeName: 'source.tli',
-              grammar
-            }
-          ]
-        })
-
-        // 🧪 DEBUG (optional)
-        console.log('[SHIKI] Loaded languages:', highlighter.getLoadedLanguages())
-
-        return highlighter.codeToHtml(code, {
-          lang,
-          theme: 'github-dark'
-        })
-      }
-    }
+    lineNumbers: true
   }
 })
