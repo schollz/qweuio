@@ -3,6 +3,8 @@ package midi
 import (
 	"fmt"
 	"museq/src/midiconnector"
+	"strconv"
+	"strings"
 
 	log "github.com/schollz/logger"
 )
@@ -13,6 +15,40 @@ type Player struct {
 	Device       *midiconnector.Device
 	opened       bool
 	channel      uint8
+}
+
+func Parse(line string) (p *Player, err error) {
+	// midi NAME CHANNEL 1-indexed, need to convert to 0-index
+	parts := strings.Fields(strings.TrimSpace(line))
+	if len(parts) < 3 {
+		err = fmt.Errorf("invalid midi line format: expected 'midi NAME CHANNEL', got '%s'", line)
+		return
+	}
+
+	if parts[0] != "midi" {
+		err = fmt.Errorf("line must start with 'midi', got '%s'", parts[0])
+		return
+	}
+
+	name := parts[1]
+	channelStr := parts[2]
+
+	channel, parseErr := strconv.Atoi(channelStr)
+	if parseErr != nil {
+		log.Warnf("could not parse channel string")
+		channel = 0
+	} else {
+		// Convert from 1-indexed to 0-indexed
+		channel = channel - 1
+	}
+
+	if channel < 0 || channel > 15 {
+		err = fmt.Errorf("channel must be between 1-16, got %d", channel+1)
+		return
+	}
+
+	p, err = New(name, channel)
+	return
 }
 
 func New(name string, channel int) (p *Player, err error) {

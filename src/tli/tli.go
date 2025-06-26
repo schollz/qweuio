@@ -49,26 +49,13 @@ func Parse(tliString string) (tli TLI, err error) {
 			continue
 		}
 		if strings.ToLower(fields[0]) == "midi" {
-			midiName := fields[1]
-			if midiParsed.Name != "" {
-				var p player.Player
-				p, err = midi.New(midiName, midiParsed.Channel)
-				if err != nil {
-					log.Warnf("Error creating midi player: %s", err)
-					continue
-				} else {
-					log.Debugf("connected: %+v", p)
-					tli.Players = append(tli.Players, p)
-				}
-			}
-			midiParsed.Name = midiName
-		} else if strings.ToLower(fields[0]) == "channel" {
-			if len(fields) > 1 {
-				if midiParsed.Channel, err = strconv.Atoi(fields[1]); err != nil {
-					log.Warnf("Error parsing channel: %s", err)
-				}
+			player, playerErr := midi.Parse(line)
+			if playerErr != nil {
+				log.Warnf("Error parsing MIDI player: %s", playerErr)
+				continue
 			} else {
-				log.Warnf("No channel value provided")
+				log.Debugf("connected: %+v", player)
+				tli.Players = append(tli.Players, player)
 			}
 		} else if strings.ToLower(fields[0]) == "supercollider" {
 			player, playerErr := supercollider.Parse(line)
@@ -125,7 +112,7 @@ func Parse(tliString string) (tli TLI, err error) {
 				if len(fields) > 2 {
 					tli.ScaleRoot = fields[2]
 				} else {
-					tli.ScaleRoot = "c"  // default to C if no root specified
+					tli.ScaleRoot = "c" // default to C if no root specified
 				}
 			} else {
 				log.Warnf("No scale value provided")
