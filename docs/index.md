@@ -34,7 +34,7 @@ When you call a midi device, use any part of the name (case insensitive).
 
 The syntax for **museq** is called **tli** (text-limited interface). '
 
-Let's start with a full-fledged example of a **museq** file, and go through it piece by piece which will help understand 90% of what **museq** can do.
+Let's start with a full-fledged example of a **museq** file, and go through it piece by piece which will help understand 90% of what **museq** can do. 
 
 ```bash
 // first example 
@@ -58,6 +58,14 @@ g _
 // pattern chaining
 +# part1*3 [part2 part3] * 2
 
+```
+
+### playing
+
+To play the above example, you would save it to a file called `example.tli` and then run:
+
+```bash
+museq example.tli
 ```
 
 ### comments
