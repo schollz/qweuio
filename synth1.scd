@@ -1,14 +1,14 @@
 (
 s.waitForBoot({
 	SynthDef(\simpleSynth, {
-		arg freq = 440, amp = 0.5, gate = 1;
+		arg freq = 440, amp = 1.0, gate = 1;
 		var env, osc, out;
 		
 		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.8), gate, doneAction: 2);
 		
 		osc = Mix.new(Saw.ar(freq * [1, 1.008, 0.993], amp / 3));
 		
-		osc = MoogFF.ar(osc,MouseX.kr(100,10000,1));
+		osc = MoogFF.ar(osc,4000);
 		
 		out = osc * env;
 		
